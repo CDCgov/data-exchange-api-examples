@@ -1,11 +1,11 @@
 
 'use strict'
 
-require('dotenv').config();
+require('dotenv').config({ path: '../../.env' });
 const fs = require('fs');
 const tus = require('tus-js-client');
 
-const path = `${__dirname}/10MB-test-file`;
+const path = `${__dirname}/../../upload-files/10MB-test-file`;
 const file = fs.createReadStream(path);
 
 const options = {
