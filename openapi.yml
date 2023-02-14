@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Swagger definition of the tusd / Data Exchange core API.
-  description: Swagger definition of the tusd / Data Exchange core API.
+  title: Swagger definition of the tusd / Data Exchange Upload API.
+  description: Swagger definition of the tusd / Data Exchange Upload API.
   version: "1.0"
   contact:
     email: tpz7@cdc.gov
