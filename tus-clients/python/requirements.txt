@@ -27,7 +27,7 @@ macholib==1.16.2
 msrest==0.6.21
 multidict==6.0.3
 Nuitka==1.4.2
-oauthlib==3.1.1
+oauthlib==3.2.2
 pyaml==21.10.1
 pycparser==2.21
 pyinstaller==5.7.0
