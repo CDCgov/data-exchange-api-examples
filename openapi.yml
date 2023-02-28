@@ -30,13 +30,13 @@ paths:
           required: true
           description: urlencoded string
         - name: username
-          in: query
+          in: formData
           schema:
             type: string
           required: true
           description: SAMS System account username (required)
         - name: password
-          in: query
+          in: formData
           schema:
             type: string
           required: true
