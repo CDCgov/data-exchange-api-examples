@@ -4,9 +4,9 @@
 
 This repo holds example scripts showing how to use the Tus resumable upload client to upload a file to the DeX API. See the following table for the hostnames of the different DeX API environments:
 
-| Env | Hostname                               |
-| --- | -------------------------------------- |
-| Dev | https://ocio-dmz-tst-dex.azure-api.net |
+| Env | Hostname               |
+| --- | ---------------------- |
+| Dev | https://apidev.cdc.gov |
 
 ## Setup
 
