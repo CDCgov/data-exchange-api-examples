@@ -2,3 +2,9 @@
 
 # NodeJS
 tus-clients/nodejs/node_modules
+
+# Java
+**/.gradle
+
+# Intellij
+**/.idea
