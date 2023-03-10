@@ -5,6 +5,7 @@ tus-clients/nodejs/node_modules
 
 # Java
 **/.gradle
+tus-clients/java/build/
 
 # Intellij
 **/.idea
