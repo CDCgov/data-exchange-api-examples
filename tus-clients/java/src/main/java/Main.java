@@ -4,11 +4,10 @@ import io.tus.java.client.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ProtocolException {
+    public static void main(String[] args) {
         try {
             Dotenv dotenv = Dotenv.configure()
                     .directory("../../.env")
@@ -17,11 +16,15 @@ public class Main {
             HashMap<String, String> headerMap = new HashMap<>();
             headerMap.put("Authorization", "Bearer " + dotenv.get("AUTH_TOKEN"));
 
+            // Both of these are necessary to work around 411 issue.
+            System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+            headerMap.put("Content-Length", "0");
+
             HashMap<String, String> metadataMap = new HashMap<>();
             metadataMap.put("filename", "10MB-test-file");
             metadataMap.put("filetype", "text/plain");
             metadataMap.put("meta_destination_id", "ndlp");
-            metadataMap.put("meta_ext_event", "ri");
+            metadataMap.put("meta_ext_event", "routineImmunization");
             metadataMap.put("meta_ext_source", "IZGW");
             metadataMap.put("meta_ext_sourceversion", "V2022-12-31");
             metadataMap.put("meta_ext_entity", "DD2");
@@ -29,8 +32,10 @@ public class Main {
             metadataMap.put("meta_ext_filename", "10MB-test-file");
             metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
 
+            System.setProperty("http.strictPostRedirect", "true");
+
             TusClient client = new TusClient();
-            client.setUploadCreationURL(new URL(dotenv.get("DEX_URL")));
+            client.setUploadCreationURL(new URL(dotenv.get("DEX_URL") + "/upload"));
             client.setHeaders(headerMap);
 
             File file = new File("../../upload-files/10MB-test-file");
