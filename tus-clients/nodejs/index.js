@@ -17,7 +17,7 @@ const options = {
     filename: "10MB-test-file",
     filetype: "text/plain",
     meta_destination_id: "ndlp",
-    meta_ext_event: "ri",
+    meta_ext_event: "routineImmunization",
     meta_ext_source: "IZGW",
     meta_ext_sourceversion: "V2022-12-31",
     meta_ext_entity: "DD2",
