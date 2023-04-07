@@ -2,7 +2,8 @@
 .vscode 
 
 # Local uploads
-uploads
+uploads/*
+!uploads/readme.md
 
 # Environment variables
 *.env
