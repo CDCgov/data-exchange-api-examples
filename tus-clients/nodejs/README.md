@@ -6,9 +6,19 @@ This is an example of using the Tus NodeJS Client to perform a file upload to th
 
 Begin by installing the latest version of NodeJS and NPM. Then, install the Tus JS Client by running the `npm install` command in your terminal.
 
+### Environment Variable
+
+Prior to starting, you must setup envirable variables in a file called `.env` at the top level (two folders up from here) of the repository.
+
+```bash
+ACCOUNT_USERNAME=
+ACCOUNT_PASSWORD=
+DEX_URL=
+```
+
 ## Usage
 
-To run the script, simply invoke NodeJS passing the script name as its first argument, as in `node index.js`. You should get console output similar to this:
+To run the script, invoke NodeJS passing the script name as its first argument, as in `node index.js`. You should get console output similar to this:
 
 ```
 0 10485760 0.00%
@@ -23,5 +33,5 @@ To run the script, simply invoke NodeJS passing the script name as its first arg
 9502720 10485760 90.63%
 9961472 10485760 95.00%
 10485760 10485760 100.00%
-Upload finished: https://ocio-dmz-tst-dex.azure-api.net/upload/files/1e7778bbd0963b8a74f6055cb3489b7c
+Upload finished: https://apidev.cdc.gov/upload/files/1e7778bbd0963b8a74f6055cb3489b7c
 ```
