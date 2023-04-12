@@ -11,9 +11,9 @@ Begin by installing the latest version of NodeJS and NPM. Then, install the Tus 
 Prior to starting, you must setup envirable variables in a file called `.env` at the top level (two folders up from here) of the repository.
 
 ```bash
-ACCOUNT_USERNAME=
-ACCOUNT_PASSWORD=
-DEX_URL=
+ACCOUNT_USERNAME=""
+ACCOUNT_PASSWORD=""
+DEX_URL=""
 ```
 
 ## Usage
