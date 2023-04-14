@@ -12,8 +12,9 @@ This project acts as a python client to send files to CDC's Data Exchange Upload
 This tool must have the following environment variables or create a .env file with the following information.
 
 ```bash
-DEX_ACCESS_TOKEN=<bearer_token> \
-DEX_TUS_UPLOAD_URL=<upload_api_endpoint> \
+ACCOUNT_USERNAME=<sams_sys_account_name> \
+ACCOUNT_PASSWORD=<sams_sys_account_pswd> \
+DEX_URL=<dex_staging_url> \
 ```
 
 ## Running the code
