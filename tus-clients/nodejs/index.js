@@ -32,6 +32,7 @@ async function start() {
       meta_username: "ygj6@cdc.gov",
       meta_ext_objectkey: uuidv4(),
       meta_ext_filename: "10MB-test-file",
+      meta_ext_submissionperiod: '1',
     },
     onError(error) {
       console.error("An error occurred:");
