@@ -11,6 +11,9 @@ async function start() {
   if (loginResponse === null) {
     console.error("Login failed. Exiting program.");
     process.exit(1);
+  } else {
+    console.log("oauth to SAMS: successful.");
+    console.log("Proceeding to upload.");
   }
 
   const path = `${__dirname}/../../upload-files/10MB-test-file`;
@@ -32,7 +35,9 @@ async function start() {
       meta_username: "ygj6@cdc.gov",
       meta_ext_objectkey: uuidv4(),
       meta_ext_filename: "10MB-test-file",
+      meta_ext_submissionperiod: "1",
     },
+
     onError(error) {
       console.error("An error occurred:");
       console.error(error);
