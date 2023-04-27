@@ -14,7 +14,6 @@ if (env !== null) {
 
 authUrl = `${env.DEX_URL}/oauth`
 
-
 const params = new URLSearchParams({
   'username': env.USER_NAME,
   'password': env.USER_PASSWORD,
