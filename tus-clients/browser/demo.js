@@ -1,7 +1,45 @@
 /* global tus */
 /* eslint-disable no-console, no-alert */
 
-'use strict'
+// 'use strict'
+(async () => {
+
+console.log('demo.js is loaded')
+
+if (env !== null) {
+  console.log('environment variables loaded')
+} else {
+  console.error('Error: environment variables not found')
+} // .if 
+
+authUrl = `${env.DEX_URL}/oauth`
+
+
+const params = new URLSearchParams({
+  'username': env.USER_NAME,
+  'password': env.USER_PASSWORD,
+});
+
+// console.log('sending params: ', params.toString())
+console.log('sending auth request..')
+
+const response = await fetch(authUrl, {
+    method: "POST",
+    body: params,
+})
+
+
+if (response.ok) {
+  console.log('Success response: ', response)
+} else {
+  console.error('Error response: ', response)
+} // .response.ok
+
+const loginResponse = await response.json()
+
+// console.log('loginResponse: ', loginResponse)
+console.log('login response received..')
+
 
 let upload          = null
 let uploadIsRunning = false
@@ -48,7 +86,10 @@ function startUpload () {
     return
   }
 
-  const endpoint = endpointInput.value
+  // const endpoint = endpointInput.value
+  const endpoint = `${env.DEX_URL}/upload`
+  console.log('starting upload to endpoint: ', endpoint) 
+  
   let chunkSize = parseInt(chunkInput.value, 10)
   if (Number.isNaN(chunkSize)) {
     chunkSize = Infinity
@@ -61,15 +102,40 @@ function startUpload () {
 
   toggleBtn.textContent = 'pause upload'
 
+  // 
+  const uuidv4ID = crypto.randomUUID()
+
+  const metadata =   {
+    filename: "10MB-test-file",
+    filetype: "text/plain",
+    meta_destination_id: "ndlp",
+    meta_ext_event: "routineImmunization",
+    meta_ext_source: "IZGW",
+    meta_ext_sourceversion: "V2022-12-31",
+    meta_ext_entity: "DD2",
+    meta_username: "ygj6@cdc.gov",
+    meta_ext_objectkey: uuidv4ID,
+    meta_ext_filename: "10MB-test-file",
+    meta_ext_submissionperiod: '1',
+  }
+
+
+  const authToken = `Bearer ${loginResponse.access_token}`
+  // console.log('authToken: ', authToken)
+  
   const options = {
     endpoint,
+    headers: {
+      Authorization: authToken,
+    },
     chunkSize,
     retryDelays: [0, 1000, 3000, 5000],
     parallelUploads,
-    metadata   : {
-      filename: file.name,
-      filetype: file.type,
-    },
+    metadata: metadata,
+    // metadata   : {
+    //   filename: file.name,
+    //   filetype: file.type,
+    // },
     onError (error) {
       if (error.originalRequest) {
         if (window.confirm(`Failed because: ${error}\nDo you want to retry?`)) {
@@ -137,3 +203,6 @@ toggleBtn.addEventListener('click', (e) => {
 })
 
 input.addEventListener('change', startUpload)
+
+
+})()

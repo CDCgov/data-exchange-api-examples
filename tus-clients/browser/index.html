@@ -38,10 +38,11 @@
             </label>
           </td>
           <td>
-            <input type="text" id="endpoint" name="endpoint" value="http://localhost:8080/files/"> 
+            <input type="text" id="endpoint" name="endpoint" value="" disabled>
             <!-- http://localhost:8080/files/ -->
             <!-- https://tusd.tusdemo.net/files/ -->
-          </td>
+            <!-- https://apidev.cdc.gov/upload -->
+           </td> 
         </tr>
         <tr>
           <td>
@@ -91,6 +92,18 @@
 
     </div>
   </body>
+
+  <!-- -->
+  <script src="./env.js"></script>
+  <!-- example env.js 
+  
+    window.env={'USER_NAME':'...', USER_PASSWORD:'...', 'DEX_URL': '...'}
+  
+  -->
+  <script>
+    const dexUrlUpload = env.DEX_URL + '/upload'
+    document.getElementById('endpoint').value = dexUrlUpload
+  </script>
 
   <script src="./tus.min.js"></script>
   <script src="./demo.js"></script>
