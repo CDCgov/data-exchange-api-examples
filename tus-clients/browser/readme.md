@@ -19,3 +19,7 @@
 - optional see browser console output for status preliminary to upload
 
 - chose file to upload such as file in /upload-files at root of repo
+
+### Reference:
+tus-js-client
+[https://github.com/tus/tus-js-client](https://github.com/tus/tus-js-client)
