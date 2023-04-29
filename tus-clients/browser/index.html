@@ -14,15 +14,16 @@
         This demo shows the basic functionality of the tus protocol. You can select a file using the controls below and start/pause the upload as you wish.
       </p>
 
-      <p>
+      <!-- <p>
         For a prettier demo please go to the
         <a href="http://tus.io/demo.html">tus.io</a> website.
         This demo is just here to aid developers.
-      </p>
+      </p> -->
 
-      <p>
+      <!-- <p>
         A demo where a video is recorded from your webcam while being simultaneously uploaded, can be found <a href="./video.html">here</a>.
-      </p>
+      </p> -->
+
 
       <div class="alert alert-warining hidden" id="support-alert">
         <b>Warning!</b> Your browser does not seem to support the features necessary to run tus-js-client. The buttons below may work but probably will fail silently.
@@ -38,10 +39,11 @@
             </label>
           </td>
           <td>
-            <input type="text" id="endpoint" name="endpoint" value="http://localhost:8080/files/"> 
+            <input type="text" id="endpoint" name="endpoint" value="" disabled>
             <!-- http://localhost:8080/files/ -->
             <!-- https://tusd.tusdemo.net/files/ -->
-          </td>
+            <!-- https://apidev.cdc.gov/upload -->
+           </td> 
         </tr>
         <tr>
           <td>
@@ -91,6 +93,18 @@
 
     </div>
   </body>
+
+  <!-- -->
+  <script src="./env.js"></script>
+  <!-- example env.js 
+  
+    window.env={'USER_NAME':'...', USER_PASSWORD:'...', 'DEX_URL': '...'}
+  
+  -->
+  <script>
+    const dexUrlUpload = env.DEX_URL + '/upload'
+    document.getElementById('endpoint').value = dexUrlUpload
+  </script>
 
   <script src="./tus.min.js"></script>
   <script src="./demo.js"></script>
