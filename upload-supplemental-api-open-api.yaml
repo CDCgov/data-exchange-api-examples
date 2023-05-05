@@ -26,7 +26,7 @@ paths:
     get:
       tags:
         - DeX
-      summary: Provides upload status for a specific tguid.
+      summary: TEST FOR APIM IMPORT
       description: Provides upload status for a specific tguid. Tus clients are used to initiate the upload. When the upload starts, clients are returned a unique identifer (tguid) used to resume uploads or identify the filename it is persisted as in blob storage once completed. The tguid will be used for getting a specific uploaded file's status..
       parameters:
       - name: tguid
