@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha index.js"
+    "test": "npx mocha index.js -r dotenv/config"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "dotenv": "^16.0.3",
     "mocha": "^10.2.0",
     "supertest": "^6.3.3"
   }
