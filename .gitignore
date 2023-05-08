@@ -9,3 +9,6 @@ tus-clients/java/build/
 
 # Intellij
 **/.idea
+
+
+**/.DS_Store
