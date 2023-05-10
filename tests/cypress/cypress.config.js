@@ -8,6 +8,10 @@ module.exports = defineConfig({
     },
   },
   env: {
-    ...env
+    ...env,
+    hideCredentials: true,
+    hideCredentialsOptions: {
+      body: ["username", "password"]
+    }
   }
 });
