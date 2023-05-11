@@ -12,6 +12,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          project: ./tests/cypress
+          working-directory: tests/cypress
           command: npx cypress run
           record: false
