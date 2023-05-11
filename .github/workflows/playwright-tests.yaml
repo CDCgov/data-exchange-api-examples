@@ -23,8 +23,8 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
-      - name: Create report directory
-        run: mkdir playwright-report
+      - name: List working-directory contents
+        run: ls -lah
       - uses: actions/upload-artifact@v3
         if: always()
         with:
