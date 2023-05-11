@@ -11,6 +11,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Cypress run
         uses: cypress-io/github-action@v5
+        env:
+          CYPRESS_DEX_URL: http://apidev.cdc.gov
+          CYPRESS_SAMS_USERNAME: ${{ secrets.SAMS_USERNAME }}
+          CYPRESS_SAMS_PASSWORD: ${{ secrets.SAMS_PASSWORD }}
         with:
           working-directory: tests/cypress
           command: npx cypress run
