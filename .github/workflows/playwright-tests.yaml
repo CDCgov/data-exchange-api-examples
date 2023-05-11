@@ -7,6 +7,9 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/playwright
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
