@@ -7,7 +7,7 @@ test("GET", async ({ request, baseURL }) => {
  console.log(await _response.status());
 });
 
-test("GET", async ({ request, baseURL }) => {
+test("GET_FAIL", async ({ request, baseURL }) => {
  const _response = await request.get(baseURL + "/api/junk/path");
  expect(_response.ok()).toBeTruthy();
  expect(_response.status()).toBe(200);
