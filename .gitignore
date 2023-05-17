@@ -1,6 +1,8 @@
 .vscode
 
-.env
+.env 
+
+env.js
 
 # NodeJS
 **/node_modules
