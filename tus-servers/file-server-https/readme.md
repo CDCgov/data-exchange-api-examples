@@ -1,17 +1,18 @@
 ## Purpose
 
 
-The purpose of this server is to be able to run the tus-client/broswer locally on https, and test APIM integration.
+The purpose of this server is to be able to run the `tus-client/broswer` locally on https, and test APIM integration.
 This is a DEV only test for integration.
 
 ## Prerequisites 
 
 ### Create Cert for Local Dev 
 
-Create a folder __cert__, at the root of file-server-https.
-This folder, cert, was added in .gitignore.
+Create a folder `cert`, at the root of `file-server-https`.
 
-Create a key and a certificate pair, run at file-server-https folder level:
+This folder, `cert`, was added in .gitignore.
+
+Create a key and a certificate pair, run at `file-server-https` folder level:
 
 `
 $ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
