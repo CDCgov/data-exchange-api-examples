@@ -29,10 +29,10 @@ func main() {
 	// Generate a self-signed certificate and private key
 	certFile := "cert.pem"
 	keyFile := "key.pem"
-	err := generateCertificate(certFile, keyFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err := generateCertificate(certFile, keyFile)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	// Start the HTTPS server
 	addr := "localhost:8080"
