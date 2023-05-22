@@ -154,6 +154,11 @@ function startUpload () {
       console.log(bytesUploaded, bytesTotal, `${percentage}%`)
     },
     onSuccess () {
+
+      console.log("upload finished ok!")
+      console.log(`upload tus status url (needs bearer token): ${env.DEX_URL}/upload/status/${upload.url}`)
+      console.log(`upload status url (supplemental api, needs bearer token): ${env.DEX_URL}/status/${upload.url}`)
+
       const anchor = document.createElement('a')
       anchor.textContent = `Download ${upload.file.name} (${upload.file.size} bytes)`
       anchor.href = upload.url
