@@ -118,8 +118,6 @@ function startUpload () {
     meta_ext_submissionperiod: '1',
   }
 
-  // console.log(`file uuidv4ID: ${uuidv4ID}`) 
-
 
   const authToken = `Bearer ${loginResponse.access_token}`
   // console.log('authToken: ', authToken)
