@@ -17,4 +17,4 @@
 |  large_file_476MB.txt | 476MB | 30174   |  30.174   | on z-scaler |
 |  large_file_476MB.txt | 476MB | 91478   |  91.478   | not on on z-scaler |
 |  large_file_953MB.txt | 963MB | 261317  | 261.317   | (~4.35 min) on on z-scaler |
-|  large_file_4GB.txt   | 4GB   | 2212094 |  2212.094 | (~36 min) on z-scaler, received responses patch 500, head 423  |
+|  large_file_4GB.txt   | 4GB   | 2212094 |  2212.094 | (~36 min) on z-scaler, received responses patch 500, head 423, kept resuming to end |
