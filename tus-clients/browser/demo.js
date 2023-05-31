@@ -104,19 +104,25 @@ function startUpload () {
   // 
   const uuidv4ID = crypto.randomUUID()
 
+
   const metadata =   {
-    filename: "10MB-test-file",
+
+    // REQUIRED
+    meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
+    meta_ext_event: "testevent1",
+
+    // one of these 3 to have the orig. file name or uuid
+    filename: "10MB-test-file", // OR
+    meta_ext_filename: "10MB-test-file", // OR
+    meta_ext_objectkey: uuidv4ID, 
+
+    // CUSTOM PER USE_CASE
+
     filetype: "text/plain",
-    meta_destination_id: "ndlp",
-    meta_ext_event: "routineImmunization",
-    meta_ext_source: "IZGW",
-    meta_ext_sourceversion: "V2022-12-31",
-    meta_ext_entity: "DD2",
-    meta_username: "ygj6@cdc.gov",
-    meta_ext_objectkey: uuidv4ID,
-    meta_ext_filename: "10MB-test-file",
-    meta_ext_submissionperiod: '1',
-  }
+    meta_ext_source: "for_the_demo",
+    meta_username: "example@cdc.gov",
+
+  } // .metadata
 
 
   const authToken = `Bearer ${loginResponse.access_token}`
