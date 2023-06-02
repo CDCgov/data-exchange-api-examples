@@ -88,7 +88,10 @@ function startUpload () {
   // const endpoint = endpointInput.value
   const endpoint = `${env.DEX_URL}/upload`
   console.log('starting upload to endpoint: ', endpoint) 
-  
+
+  const startTimeUpload = new Date().getTime()
+  console.log('starting time startTimeUpload: ', startTimeUpload) 
+
   let chunkSize = parseInt(chunkInput.value, 10)
   if (Number.isNaN(chunkSize)) {
     chunkSize = Infinity
@@ -104,19 +107,26 @@ function startUpload () {
   // 
   const uuidv4ID = crypto.randomUUID()
 
+  const fileNameUpload = file.name
+
   const metadata =   {
-    filename: "10MB-test-file",
+
+    // REQUIRED
+    meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
+    meta_ext_event: "testevent1",
+
+    // one of these 3 to have the orig. file name or uuid
+    filename: fileNameUpload, // OR
+    meta_ext_filename: fileNameUpload, // OR
+    meta_ext_objectkey: uuidv4ID, 
+
+    // CUSTOM PER USE_CASE
+
     filetype: "text/plain",
-    meta_destination_id: "ndlp",
-    meta_ext_event: "routineImmunization",
-    meta_ext_source: "IZGW",
-    meta_ext_sourceversion: "V2022-12-31",
-    meta_ext_entity: "DD2",
-    meta_username: "ygj6@cdc.gov",
-    meta_ext_objectkey: uuidv4ID,
-    meta_ext_filename: "10MB-test-file",
-    meta_ext_submissionperiod: '1',
-  }
+    meta_ext_source: "for_the_demo",
+    meta_username: "example@cdc.gov",
+
+  } // .metadata
 
 
   const authToken = `Bearer ${loginResponse.access_token}`
@@ -156,6 +166,11 @@ function startUpload () {
     onSuccess () {
 
       console.log("upload finished ok!")
+      const endTimeUpload = new Date().getTime()
+      const durationUpload = (endTimeUpload-startTimeUpload)
+
+      console.log(`file name: ${fileNameUpload}, upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)
+
       console.log(`upload tus status url (needs bearer token): ${env.DEX_URL}/upload/status/${upload.url}`)
       console.log(`upload status url (supplemental api, needs bearer token): ${env.DEX_URL}/status/${upload.url}`)
 
