@@ -115,13 +115,14 @@ function startUpload () {
     meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
     meta_ext_event: "testevent1",
 
-    // one of these 3 to have the orig. file name or uuid
-    filename: fileNameUpload, // OR
-    meta_ext_filename: fileNameUpload, // OR
-    meta_ext_objectkey: uuidv4ID, 
+    // one of these 3 fields is needed to have the original file name 
+    // filename: fileNameUpload, // OR
+    meta_ext_filename: fileNameUpload, // OR 
+    // original_filename: fileNameUpload, 
 
     // CUSTOM PER USE_CASE
-
+    meta_file_timestamp: file.lastModified,
+    meta_ext_objectkey: uuidv4ID, 
     filetype: "text/plain",
     meta_ext_source: "for_the_demo",
     meta_username: "example@cdc.gov",
