@@ -6,7 +6,7 @@ public class TusUploaderTest {
     @Test
     public void testTusUploader() {
         TusUploader tusUploader = new TusUploader();
-        uploader.TusUploader();
+        assertNotNull(tusUploader.tusUploader())
     }
 
 }

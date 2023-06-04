@@ -8,7 +8,7 @@ import java.util.*;
 
 class TusUploader {
     
-    static void TusUploader() {
+    public void TusUploader() {
         try {
             Dotenv dotenv = Dotenv.configure()
                     .directory("../../.env")
