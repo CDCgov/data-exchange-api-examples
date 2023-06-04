@@ -1,21 +1,110 @@
 plugins {
-    id 'java'
+    id 'signing'
+    id('io.github.gradle-nexus.publish-plugin') version '1.3.0'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
 
-repositories {
-    mavenCentral()
+group 'io.tus.java.client'
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
+
+// We compile the library using Java 1.7 compatibility
+// in order to ensure interoperability with older Android platforms.
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// load version number from file
+def config = new ConfigSlurper().parse(new File("${projectDir}/src/main/resources/tus-java-client-version/version.properties").toURI().toURL())
+version = config.versionNumber
 
 dependencies {
-    implementation 'io.tus.java.client:tus-java-client:0.4.5'
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'org.jetbrains:annotations:24.0.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mock-server:mockserver-junit-rule:5.15.0'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
 }
 
-test {
-    useJUnitPlatform()
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+
+def pomConfig = {
+    name 'tus-java-client'
+    url 'https://tus.io'
+
+    scm {
+        url 'https://github.com/tus/tus-java-client'
+        connection 'https://github.com/tus/tus-java-client'
+        developerConnection 'https://github.com/tus/tus-java-client'
+    }
+
+    developers {
+        developer {
+            id 'acconut'
+            name 'Marius Kleidl'
+            email 'maerious@gmail.com'
+        }
+    }
+
+    inceptionYear '2015'
+    licenses {
+        license {
+            name 'The MIT License (MIT)'
+            url 'http://opensource.org/licenses/MIT'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'io.tus.java.client'
+            artifactId = 'tus-java-client'
+            version project.getVersion()
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Java client for tus, the resumable file uploading protocol.')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+signing {
+    def signingKeyId = System.getenv("SIGNING_KEY_ID")
+    def signingPassword = System.getenv("SIGNING_KEY_PASSWORD")
+    def signingKey = System.getenv("SIGNING_KEY_AMORED")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = System.getenv("SONATYPE_USER")
+            password = System.getenv("SONATYPE_KEY")
+            stagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE')
+        }
+    }
 }
