@@ -7,17 +7,20 @@ import java.net.URL;
 import java.util.*;
 
 class TusUploader {
-    
-    public void TusUploader() {
-        try {
-            Dotenv dotenv = Dotenv.configure()
-                    .directory("../../.env")
-                    .load();
+    private Dotenv dotenv;
+    private TusClient client;
 
+    public TusUploader(Dotenv dotenv, TusClient client) {
+        this.dotenv = dotenv;
+        this.client = client;
+    }
+
+    public void makeUpload() {
+        try {
             HashMap<String, String> headerMap = new HashMap<>();
             headerMap.put("Authorization", "Bearer " + dotenv.get("AUTH_TOKEN"));
 
-            // Both of these are necessary to work around 411 issue.
+            // Both of these are necessary to work around the 411 issue.
             System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
             headerMap.put("Content-Length", "0");
 
@@ -35,7 +38,6 @@ class TusUploader {
 
             System.setProperty("http.strictPostRedirect", "true");
 
-            TusClient client = new TusClient();
             client.setUploadCreationURL(new URL(dotenv.get("DEX_URL") + "/upload"));
             client.setHeaders(headerMap);
 
