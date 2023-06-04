@@ -39,3 +39,9 @@ gradle init
 ```bash
 ./gradlew build
 ```
+
+- Run the Gradle test task with `--info` and `--scan` options
+
+```bash
+./gradlew test --info --scan
+```
