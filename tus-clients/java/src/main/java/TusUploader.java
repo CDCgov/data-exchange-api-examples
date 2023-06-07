@@ -3,6 +3,7 @@ import io.tus.java.client.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 
@@ -51,7 +52,6 @@ class TusUploader {
                 @Override
                 protected void makeAttempt() throws ProtocolException, IOException {
                     TusUploader uploader = client.resumeOrCreateUpload(upload);
-                    uploader.setChunkSize(1024);
 
                     do {
                         long totalBytes = upload.getSize();
