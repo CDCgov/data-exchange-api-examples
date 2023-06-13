@@ -116,7 +116,7 @@ function startUpload () {
     meta_ext_event: "testevent1",
 
     // one of these 3 fields is needed to have the original file name 
-    // filename: fileNameUpload, // OR
+    filename: fileNameUpload, // OR
     meta_ext_filename: fileNameUpload, // OR 
     // original_filename: fileNameUpload, 
 
