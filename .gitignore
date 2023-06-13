@@ -10,6 +10,7 @@ env.js
 # Java
 **/.gradle
 tus-clients/java/build/
+tus-clients/java/bin
 
 # Intellij
 **/.idea
