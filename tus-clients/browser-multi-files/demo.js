@@ -72,25 +72,40 @@
     }
   } // .askToResumeUpload
 
+
+  // async function uploadFile (file, options) {
+
+  //     upload = new tus.Upload(file, options)
+  //     upload.findPreviousUploads().then((previousUploads) => {
+  //       askToResumeUpload(previousUploads, upload)
+  
+  //       upload.start()
+  //       uploadIsRunning = true
+  //     })
+
+  //   console.log('file.name --> ', file.name)
+
+  // } // .uploadFile
+
+
   function startUpload () {
-    const files = input.files //[0]
+    const fileList = Array.from(input.files) //[0]
     // Only continue if a file has actually been selected.
     // IE will trigger a change event even if we reset the input element
     // using reset() and we do not want to blow up later.
-    
-    if (!files) {
-      return
-    }
 
-    // TODO: upload multiple files
-    throw new Error('TODO: Not implemented')
-
-    // const endpoint = endpointInput.value
-    const endpoint = `${env.DEX_URL}/upload`
-    console.log('starting upload to endpoint: ', endpoint) 
+    // console.log('fileList', fileList)
+    if (!fileList ) { return }
 
     const startTimeUpload = new Date().getTime()
     console.log('starting time: ', startTimeUpload) 
+
+    //
+    // uploads set-up
+    // ----------------------------------------------------
+    // const endpoint = endpointInput.value
+    const endpoint = `${env.DEX_URL}/upload`
+    console.log('starting upload to endpoint: ', endpoint) 
 
     let chunkSize = parseInt(chunkInput.value, 10)
     if (Number.isNaN(chunkSize)) {
@@ -105,86 +120,123 @@
 
     toggleBtn.textContent = 'pause upload'
 
-    const metadata = {
-      // REQUIRED
-      meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
-      meta_ext_event: "testevent1",
-
-      // REQUIRED: original file name, see metadata for destination file repo
-      filename: file.name, 
-
-      // CUSTOM (PER USE_CASE) see metadata for destination file in repo
-      meta_file_timestamp: file.lastModified,
-      meta_ext_objectkey: crypto.randomUUID(), 
-      filetype: "text/plain",
-      meta_ext_source: "for_the_demo",
-      meta_username: "example@cdc.gov",
-    } // .metadata
-
-
     const authToken = `Bearer ${loginResponse.access_token}`
-    // console.log('authToken: ', authToken)
-    
-    const options = {
-      endpoint,
-      headers: {
-        Authorization: authToken,
-      },
-      chunkSize,
-      retryDelays: [0, 1000, 3000, 5000],
-      parallelUploads,
-      metadata: metadata,
-      // metadata   : {
-      //   filename: file.name,
-      //   filetype: file.type,
-      // },
-      onError (error) {
-        if (error.originalRequest) {
-          if (window.confirm(`Failed because: ${error}\nDo you want to retry?`)) {
-            upload.start()
-            uploadIsRunning = true
-            return
+    // console.log('authToken: ', authToken) 
+
+    const fileListBytesTotal = fileList.reduce( 
+      (acc, curr ) => acc + curr.size,
+      0
+    ) // .fileListBytesTotal
+    console.log('fileListBytesTotal: ', fileListBytesTotal)
+
+    //
+    // uploading files one by one
+    // ----------------------------------------------------
+
+    // TODO: this needs fixing as currently goes over 100%
+    let fileListBytesUploaded = 0
+
+    fileList.forEach( (file, index) => {
+
+      console.log('start uploading file: ', file.name, index)
+
+      const metadata = {
+        // REQUIRED
+        meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
+        meta_ext_event: "testevent1",
+  
+        // REQUIRED: original file name, see metadata for destination file repo
+        filename: file.name, 
+  
+        // CUSTOM (PER USE_CASE) see metadata for destination file in repo
+        meta_file_timestamp: file.lastModified,
+        meta_ext_objectkey: crypto.randomUUID(), 
+        filetype: "text/plain",
+        meta_ext_source: "for_the_demo",
+        meta_username: "example@cdc.gov",
+      } // .metadata
+
+      const options = {
+        endpoint,
+        headers: {
+          Authorization: authToken,
+        },
+        chunkSize,
+        retryDelays: [0, 1000, 3000, 5000],
+        parallelUploads,
+        metadata: metadata,
+        // metadata   : {
+        //   filename: file.name,
+        //   filetype: file.type,
+        // },
+        onError (error) {
+          if (error.originalRequest) {
+            if (window.confirm(`Failed because: ${error}\nDo you want to retry?`)) {
+              upload.start()
+              uploadIsRunning = true
+              return
+            }
+          } else {
+            window.alert(`Failed because: ${error}`)
           }
-        } else {
-          window.alert(`Failed because: ${error}`)
-        }
+  
+          reset()
+        },
+        onProgress (fileBytesUploaded, fileBytesTotal) {
+  
+          fileListBytesUploaded = fileListBytesUploaded + fileBytesUploaded
+  
+          const percentageFile = ((fileBytesUploaded / fileBytesTotal) * 100).toFixed(2)
+          const percentageTotal = ((fileListBytesUploaded / fileListBytesTotal) * 100).toFixed(2)
+  
+  
+          progressBar.style.width = `${percentageTotal}%`
+  
+          console.log('file:', file.name, fileBytesUploaded, fileBytesTotal, `${percentageFile}%`)
+          console.log('fileList:', fileListBytesUploaded, fileListBytesTotal, `${percentageTotal}%`)
+  
+        },
+        onSuccess () {
+  
+          console.log(`file: ${file.name} uploaded`)
+  
+          // console.log(`upload tus status url (needs bearer token): ${env.DEX_URL}/upload/status/${upload.url}`)
+          // console.log(`upload status url (supplemental api, needs bearer token): ${env.DEX_URL}/status/${upload.url}`)
+  
+          const anchor = document.createElement('a')
+          anchor.textContent = `Download ${upload.file.name} (${upload.file.size} bytes)`
+          anchor.href = upload.url
+          anchor.className = 'btn btn-success'
+          uploadList.appendChild(anchor)
+  
+          reset()
+        },
+      } // .options
+      
+      let upload = new tus.Upload(file, options)
+      upload.findPreviousUploads().then((previousUploads) => {
+        askToResumeUpload(previousUploads, upload)
+  
+        upload.start()
+        uploadIsRunning = true
+      })
 
-        reset()
-      },
-      onProgress (bytesUploaded, bytesTotal) {
-        const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
-        progressBar.style.width = `${percentage}%`
-        console.log(bytesUploaded, bytesTotal, `${percentage}%`)
-      },
-      onSuccess () {
 
-        console.log("upload finished ok!")
-        const endTimeUpload = new Date().getTime()
-        const durationUpload = (endTimeUpload-startTimeUpload)
+    }) // .fileList.forEach
 
-        console.log(`file name: ${fileNameUpload}, upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)
 
-        console.log(`upload tus status url (needs bearer token): ${env.DEX_URL}/upload/status/${upload.url}`)
-        console.log(`upload status url (supplemental api, needs bearer token): ${env.DEX_URL}/status/${upload.url}`)
+    //    // TODO: this needs fixing as currently goes over 100% 
+    // uploading done ?
+    // ----------------------------------------------------
+    // if ( fileListBytesUploaded <= fileListBytesTotal) {
 
-        const anchor = document.createElement('a')
-        anchor.textContent = `Download ${upload.file.name} (${upload.file.size} bytes)`
-        anchor.href = upload.url
-        anchor.className = 'btn btn-success'
-        uploadList.appendChild(anchor)
+      // console.log("files uploaded ok!")
+      // const durationUpload = (new Date().getTime()) - startTimeUpload
+  
+      // console.log(`total upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)  
+    // } // .if
 
-        reset()
-      },
-    }
-
-    upload = new tus.Upload(file, options)
-    upload.findPreviousUploads().then((previousUploads) => {
-      askToResumeUpload(previousUploads, upload)
-
-      upload.start()
-      uploadIsRunning = true
-    })
-  }
+  } // .startUpload
 
   if (!tus.isSupported) {
     alertBox.classList.remove('hidden')
@@ -215,6 +267,5 @@
   })
 
   input.addEventListener('change', startUpload)
-
 
 })() // async
