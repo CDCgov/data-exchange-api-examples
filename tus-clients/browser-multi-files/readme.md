@@ -1,5 +1,7 @@
 ## Browser Auth with SAMS, and Upload to API 
 
+Multiple files can be selected to be uploaded.
+
 ### Prerequisites
 
 - add a file env.js at root, see example: env_example.js 
