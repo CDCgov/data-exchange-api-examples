@@ -66,25 +66,8 @@
 
   } // .reset
 
-  function askToResumeUpload (previousUploads, currentUpload) {
-    if (previousUploads.length === 0) return
 
-    let text = 'You tried to upload this file previously at these times:\n\n'
-    previousUploads.forEach((previousUpload, index) => {
-      text += `[${index}] ${previousUpload.creationTime}\n`
-    })
-    text += '\nEnter the corresponding number to resume an upload or press Cancel to start a new upload'
-
-    const answer = prompt(text)
-    const index = parseInt(answer, 10)
-
-    if (!Number.isNaN(index) && previousUploads[index]) {
-      currentUpload.resumeFromPreviousUpload(previousUploads[index])
-    }
-  } // .askToResumeUpload
-
-
-  function startUpload () {
+  function startUpload() {
     const fileList = Array.from(input.files) //[0]
     // Only continue if a file has actually been selected.
     // IE will trigger a change event even if we reset the input element
@@ -92,6 +75,7 @@
 
     // console.log('fileList', fileList)
     if (!fileList ) { return }
+    progressBar.style.width = 0
 
     const startTimeUpload = new Date().getTime()
     console.log('starting time: ', startTimeUpload) 
@@ -187,7 +171,6 @@
           const percentageFile = ((fileBytesUploaded / fileBytesTotal) * 100).toFixed(2)
           const percentageTotal = ((fileListBytesUploaded / fileListBytesTotal) * 100).toFixed(2)
   
-  
           progressBar.style.width = `${percentageTotal}%`
   
           console.log('file:', file.name, fileBytesUploaded, fileBytesTotal, `${percentageFile}%`)
@@ -212,12 +195,8 @@
       } // .options
       
       let upload = new tus.Upload(file, options)
-      upload.findPreviousUploads().then((previousUploads) => {
-        askToResumeUpload(previousUploads, upload)
-  
-        upload.start()
-        uploadIsRunning = true
-      })
+      upload.start()
+      uploadIsRunning = true
 
 
     }) // .fileList.forEach
