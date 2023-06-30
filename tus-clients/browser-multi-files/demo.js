@@ -36,7 +36,7 @@
   // console.log('login response received..')
 
 
-  let upload          = null
+  // let upload          = null
   let uploadIsRunning = false
   const toggleBtn       = document.querySelector('#toggle-btn')
   const input           = document.querySelector('input[type=file]')
@@ -48,11 +48,23 @@
   const parallelInput   = document.querySelector('#paralleluploads')
   const endpointInput   = document.querySelector('#endpoint')
 
-  function reset () {
-    input.value = ''
-    toggleBtn.textContent = 'start upload'
-    upload = null
-    uploadIsRunning = false
+  function reset (startTimeUpload, fileListBytesUploaded, fileListBytesTotal) {
+
+    // ----------------------------------------------------
+    if ( fileListBytesUploaded >= fileListBytesTotal) {
+
+      console.log("files uploaded ok!")
+      const durationUpload = (new Date().getTime()) - startTimeUpload
+  
+      console.log(`total upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)  
+
+      input.value = ''
+      toggleBtn.textContent = 'start upload'
+      // upload = null
+      uploadIsRunning = false
+
+    } // .if
+
   } // .reset
 
   function askToResumeUpload (previousUploads, currentUpload) {
@@ -71,21 +83,6 @@
       currentUpload.resumeFromPreviousUpload(previousUploads[index])
     }
   } // .askToResumeUpload
-
-
-  // async function uploadFile (file, options) {
-
-  //     upload = new tus.Upload(file, options)
-  //     upload.findPreviousUploads().then((previousUploads) => {
-  //       askToResumeUpload(previousUploads, upload)
-  
-  //       upload.start()
-  //       uploadIsRunning = true
-  //     })
-
-  //   console.log('file.name --> ', file.name)
-
-  // } // .uploadFile
 
 
   function startUpload () {
@@ -114,7 +111,9 @@
 
     let parallelUploads = parseInt(parallelInput.value, 10)
     if (Number.isNaN(parallelUploads)) {
-      // currently this is disabled as only 1 works, ref: https://github.com/tus/tusd/issues/843 
+      // currently this is disabled as only parallelUploads = 1 works
+      // multiple uploads can be started concurrent ( new tus.Upload ), however each one sends chuncks serially to the server
+      // tusd azure does not support chuncks concatenation, ref: https://github.com/tus/tusd/issues/843 
       parallelUploads = 1
     } // .if
 
@@ -130,15 +129,13 @@
     console.log('fileListBytesTotal: ', fileListBytesTotal)
 
     //
-    // uploading files one by one
+    // uploading files
     // ----------------------------------------------------
-
-    // TODO: this needs fixing as currently goes over 100%
     let fileListBytesUploaded = 0
 
     fileList.forEach( (file, index) => {
 
-      console.log('start uploading file: ', file.name, index)
+      console.log(`start uploading file: ${file.name}, file index: ${index}`)
 
       const metadata = {
         // REQUIRED
@@ -179,12 +176,14 @@
           } else {
             window.alert(`Failed because: ${error}`)
           }
-  
-          reset()
+
+          reset(startTimeUpload, fileListBytesUploaded, fileListBytesTotal)
         },
         onProgress (fileBytesUploaded, fileBytesTotal) {
-  
-          fileListBytesUploaded = fileListBytesUploaded + fileBytesUploaded
+
+          // onProgress is called 2x -> fileBytesUploaded / 2
+          fileListBytesUploaded = fileListBytesUploaded + fileBytesUploaded / 2
+
   
           const percentageFile = ((fileBytesUploaded / fileBytesTotal) * 100).toFixed(2)
           const percentageTotal = ((fileListBytesUploaded / fileListBytesTotal) * 100).toFixed(2)
@@ -193,7 +192,7 @@
           progressBar.style.width = `${percentageTotal}%`
   
           console.log('file:', file.name, fileBytesUploaded, fileBytesTotal, `${percentageFile}%`)
-          console.log('fileList:', fileListBytesUploaded, fileListBytesTotal, `${percentageTotal}%`)
+          console.log('fileList (total):', fileListBytesUploaded, fileListBytesTotal, `${percentageTotal}%`)
   
         },
         onSuccess () {
@@ -208,8 +207,8 @@
           anchor.href = upload.url
           anchor.className = 'btn btn-success'
           uploadList.appendChild(anchor)
-  
-          reset()
+
+          reset(startTimeUpload, fileListBytesUploaded, fileListBytesTotal)
         },
       } // .options
       
@@ -224,27 +223,15 @@
 
     }) // .fileList.forEach
 
-
-    //    // TODO: this needs fixing as currently goes over 100% 
-    // uploading done ?
-    // ----------------------------------------------------
-    // if ( fileListBytesUploaded <= fileListBytesTotal) {
-
-      // console.log("files uploaded ok!")
-      // const durationUpload = (new Date().getTime()) - startTimeUpload
-  
-      // console.log(`total upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)  
-    // } // .if
-
   } // .startUpload
 
   if (!tus.isSupported) {
     alertBox.classList.remove('hidden')
-  }
+  } // .if
 
   if (!toggleBtn) {
     throw new Error('Toggle button not found on this page. Aborting upload-demo. ')
-  }
+  } // .if
 
   toggleBtn.addEventListener('click', (e) => {
     e.preventDefault()
@@ -264,7 +251,7 @@
     } else {
       input.click()
     }
-  })
+  }) // .toggleBtn
 
   input.addEventListener('change', startUpload)
 
