@@ -36,9 +36,9 @@
   // console.log('login response received..')
 
 
-  // let upload          = null
+  let upload          = null
   let uploadIsRunning = false
-  const toggleBtn       = document.querySelector('#toggle-btn')
+
   const input           = document.querySelector('input[type=file]')
   const progress        = document.querySelector('.progress')
   const progressBar     = progress.querySelector('.bar')
@@ -46,7 +46,7 @@
   const uploadList      = document.querySelector('#upload-list')
   const chunkInput      = document.querySelector('#chunksize')
   const parallelInput   = document.querySelector('#paralleluploads')
-  const endpointInput   = document.querySelector('#endpoint')
+  // const endpointInput   = document.querySelector('#endpoint')
 
   function reset (startTimeUpload, fileListBytesUploaded, fileListBytesTotal) {
 
@@ -59,8 +59,7 @@
       console.log(`total upload duration [ms]: ${durationUpload}, [s]: ${durationUpload / 1000 }`)  
 
       input.value = ''
-      toggleBtn.textContent = 'start upload'
-      // upload = null
+
       uploadIsRunning = false
 
     } // .if
@@ -117,7 +116,7 @@
       parallelUploads = 1
     } // .if
 
-    toggleBtn.textContent = 'pause upload'
+    // toggleBtn.textContent = 'pause upload'
 
     const authToken = `Bearer ${loginResponse.access_token}`
     // console.log('authToken: ', authToken) 
@@ -228,30 +227,6 @@
   if (!tus.isSupported) {
     alertBox.classList.remove('hidden')
   } // .if
-
-  if (!toggleBtn) {
-    throw new Error('Toggle button not found on this page. Aborting upload-demo. ')
-  } // .if
-
-  toggleBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-
-    if (upload) {
-      if (uploadIsRunning) {
-        upload.abort()
-        toggleBtn.textContent = 'resume upload'
-        uploadIsRunning = false
-      } else {
-        upload.start()
-        toggleBtn.textContent = 'pause upload'
-        uploadIsRunning = true
-      }
-    } else if (input.files.length > 0) {
-      startUpload()
-    } else {
-      input.click()
-    }
-  }) // .toggleBtn
 
   input.addEventListener('change', startUpload)
 
