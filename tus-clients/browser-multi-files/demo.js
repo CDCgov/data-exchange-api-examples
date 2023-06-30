@@ -78,6 +78,7 @@
     progressBar.style.width = 0
 
     const startTimeUpload = new Date().getTime()
+    console.log('')
     console.log('starting time: ', startTimeUpload) 
 
     //
@@ -119,6 +120,9 @@
     fileList.forEach( (file, index) => {
 
       console.log(`start uploading file: ${file.name}, file index: ${index}`)
+
+      let lastChunckNotAdded = true 
+      let prevFileBytesUploaded = 0
 
       const metadata = {
         // REQUIRED
@@ -164,8 +168,14 @@
         },
         onProgress (fileBytesUploaded, fileBytesTotal) {
 
-          // onProgress is called 2x -> fileBytesUploaded / 2
-          fileListBytesUploaded = fileListBytesUploaded + fileBytesUploaded / 2
+
+          if (fileBytesUploaded !== fileBytesTotal || lastChunckNotAdded ) {
+            fileListBytesUploaded = fileListBytesUploaded + fileBytesUploaded - prevFileBytesUploaded
+            prevFileBytesUploaded = fileBytesUploaded
+            
+          } else {
+            lastChunckNotAdded = false 
+          }
 
   
           const percentageFile = ((fileBytesUploaded / fileBytesTotal) * 100).toFixed(2)
