@@ -23,3 +23,12 @@
 ### Reference:
 tus-js-client
 [https://github.com/tus/tus-js-client](https://github.com/tus/tus-js-client)
+
+
+### Further Research
+
+- Uppy could be used, it which supports the open tus standard
+
+[https://uppy.io/](https://uppy.io/)
+
+[https://github.com/transloadit/uppy](https://github.com/transloadit/uppy)
