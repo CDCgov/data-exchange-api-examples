@@ -12,7 +12,7 @@ charset-normalizer==2.1.1
 Click==7.0
 click-conf==0.0.1
 click-stream==0.0.10
-cryptography==41.0.0
+cryptography==41.0.3
 cx-Freeze==6.14.2
 elastic-transport==8.1.2
 elasticsearch==8.3.3
