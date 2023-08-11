@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 class TusUploaderProcess {
@@ -25,27 +26,33 @@ class TusUploaderProcess {
             String username = dotenv.get("ACCOUNT_USERNAME");
             String password = dotenv.get("ACCOUNT_PASSWORD");
             String apiUrl = dotenv.get("DEX_URL");
+            System.out.println("username--" + username );
+            System.out.println("password--" + password );
             System.out.println("apiUrl--" + apiUrl );
 
             String accessToken = loginClient.login(username, password, apiUrl);
             HashMap<String, String> headerMap = new HashMap<>();
             headerMap.put("Authorization", "Bearer " + accessToken);
+            headerMap.put("Tus-Resumable", "1.0.0");
 
             System.out.println("Authorization ..." + headerMap.get("Authorization"));
             client.setUploadCreationURL(new URL(apiUrl + "upload"));
-            //client.enableResuming(new TusURLMemoryStore());
+            client.enableResuming(new TusURLMemoryStore());
 
             File file = new File("../../upload-files/10MB-test-file");
             long fileSize = file.length();
             System.out.println("fileSize ..." + fileSize );
-            String stringSize =String.valueOf(fileSize);
+            //String stringSize =String.valueOf(fileSize);
             // Both of these are necessary to work around the 411 issue.
             System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-            headerMap.put("Content-Length",stringSize);
+
+
             //headerMap.put("Upload-Offset", "0");
 
-            client.setHeaders(headerMap);
-            System.out.println("headers ..." + client.getHeaders() );
+            InputStream is = new FileInputStream(new File("../../upload-files/10MB-test-file"));
+
+
+
             final TusUpload upload = new TusUpload(file);
 
             HashMap<String, String> metadataMap = new HashMap<>();
@@ -62,22 +69,26 @@ class TusUploaderProcess {
             metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
             //metadataMap.put("meta_ext_submissionperiod", "1");
 
+            headerMap.put("Content-Length","0");
+
             System.setProperty("http.strictPostRedirect", "true");
+
             upload.setMetadata(metadataMap);
-            //client.enableResuming(new TusURLMemoryStore());
-            //System.out.println("upload ..." + upload.getMetadata());
-            upload.setSize(fileSize);
-            System.out.println("upload url..." + client.getUploadCreationURL());
+            client.setHeaders(headerMap);
+            client.enableResuming(new TusURLMemoryStore());
+            System.out.println("headers ..." + client.getHeaders());
+            //upload.setSize(fileSize);
+            System.out.println("Fingerprint..." + upload.getFingerprint());
+
             System.out.println("Starting upload ...");
             TusExecutor executor = new TusExecutor() {
                 @Override
                 protected void makeAttempt() throws ProtocolException, IOException {
                     System.out.println("Before Starting upload ...");
                     System.out.println("Before fileSize ..." + fileSize);
-                    upload.setSize(fileSize);
+
                     TusUploader uploader = client.resumeOrCreateUpload(upload);
-                    System.out.println("Starting upload offset..." + uploader.getOffset());
-                    uploader.setChunkSize(1024  * 1024 );
+                    uploader.setChunkSize(10 * 1024  * 1024 );
                     do {
                         long totalBytes = upload.getSize();
                         long bytesUploaded = uploader.getOffset();
