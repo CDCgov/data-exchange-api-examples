@@ -1,62 +1,68 @@
-import com.sun.net.httpserver.Headers;
-import io.github.cdimascio.dotenv.Dotenv;
-import io.tus.java.client.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.UUID;
 
-class TusUploaderProcess {
-    private Dotenv dotenv;
-    private TusClient client ;
+import io.github.cdimascio.dotenv.Dotenv;
+import io.tus.java.client.ProtocolException;
+import io.tus.java.client.TusClient;
+import io.tus.java.client.TusExecutor;
+import io.tus.java.client.TusURLMemoryStore;
+import io.tus.java.client.TusUpload;
+import io.tus.java.client.TusUploader;
+import org.json.JSONObject;
 
-    public TusUploaderProcess(Dotenv dotenv, TusClient client) {
-        this.dotenv = dotenv;
-        this.client = client;
-    }
+/**
+ * A representative Example class to show an usual usecase.
+ */
+public class TusUploaderProcess {
 
-    public void makeUpload() {
+    private static boolean uploadSuccessfull = false;
+    /**
+     * makeUpload method to run a standard upload task.
+     * @param
+     */
+    public static void makeUpload() {
         try {
-            LoginClient loginClient = new LoginClient();
+            // When Java's HTTP client follows a redirect for a POST request, it will change the
+            // method from POST to GET which can be disabled using following system property.
+            // If you do not enable strict redirects, the tus-java-client will not follow any
+            // redirects but still work correctly.
+            System.setProperty("http.strictPostRedirect", "true");
+            Dotenv dotenv = Dotenv.configure().directory("../../").load();
+
             String username = dotenv.get("ACCOUNT_USERNAME");
             String password = dotenv.get("ACCOUNT_PASSWORD");
             String apiUrl = dotenv.get("DEX_URL");
-            System.out.println("username--" + username );
-            System.out.println("password--" + password );
-            System.out.println("apiUrl--" + apiUrl );
-
-            String accessToken = loginClient.login(username, password, apiUrl);
             HashMap<String, String> headerMap = new HashMap<>();
-            headerMap.put("Authorization", "Bearer " + accessToken);
-            headerMap.put("Tus-Resumable", "1.0.0");
 
-            System.out.println("Authorization ..." + headerMap.get("Authorization"));
-            client.setUploadCreationURL(new URL(apiUrl + "upload"));
-            client.enableResuming(new TusURLMemoryStore());
-
-            File file = new File("../../upload-files/10MB-test-file");
-            long fileSize = file.length();
-            System.out.println("fileSize ..." + fileSize );
-            //String stringSize =String.valueOf(fileSize);
             // Both of these are necessary to work around the 411 issue.
             System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+            headerMap.put("Content-Length","0");
 
+            // Create a new TusClient instance
+            final TusClient client = new TusClient();
 
-            //headerMap.put("Upload-Offset", "0");
+            // Configure tus HTTP endpoint. This URL will be used for creating new uploads
+            client.setUploadCreationURL(new URL(apiUrl + "upload"));
 
-            InputStream is = new FileInputStream(new File("../../upload-files/10MB-test-file"));
+            File file = new File("../../upload-files/large_file_1MB_001.txt");
 
+            // Enable resumable uploads by storing the upload URL in memory
+            client.enableResuming(new TusURLMemoryStore());
 
+            // Open a file using which we will then create a TusUpload. If you do not have
+            // a File object, you can manually construct a TusUpload using an InputStream.
+            // See the documentation for more information.
 
             final TusUpload upload = new TusUpload(file);
 
             HashMap<String, String> metadataMap = new HashMap<>();
-            metadataMap.put("filename", "10MB-test-file");
+            metadataMap.put("filename", "large_file_1MB_001");
             metadataMap.put("filetype", "text/plain");
             metadataMap.put("meta_destination_id", "dextesting");
             metadataMap.put("meta_ext_event", "testevent1");
@@ -64,32 +70,34 @@ class TusUploaderProcess {
             metadataMap.put("meta_ext_sourceversion", "V2022-12-31");
             metadataMap.put("meta_ext_entity", "DD2");
             metadataMap.put("meta_username", "ygj6@cdc.gov");
-            metadataMap.put("meta_ext_filename", "10MB-test-file");
+            metadataMap.put("meta_ext_filename", "large_file_1MB_001");
             metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
             metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
-            //metadataMap.put("meta_ext_submissionperiod", "1");
 
-            headerMap.put("Content-Length","0");
-
-            System.setProperty("http.strictPostRedirect", "true");
+            String accessToken = returnAccessToken();
+            headerMap.put("Authorization", "Bearer " + accessToken);
 
             upload.setMetadata(metadataMap);
             client.setHeaders(headerMap);
-            client.enableResuming(new TusURLMemoryStore());
-            System.out.println("headers ..." + client.getHeaders());
-            //upload.setSize(fileSize);
-            System.out.println("Fingerprint..." + upload.getFingerprint());
 
-            System.out.println("Starting upload ...");
+            System.out.println("Starting upload...");
+
             TusExecutor executor = new TusExecutor() {
                 @Override
                 protected void makeAttempt() throws ProtocolException, IOException {
-                    System.out.println("Before Starting upload ...");
-                    System.out.println("Before fileSize ..." + fileSize);
-
+                    // First try to resume an upload. If that's not possible we will create a new
+                    // upload and get a TusUploader in return. This class is responsible for opening
+                    // a connection to the remote server and doing the uploading.
                     TusUploader uploader = client.resumeOrCreateUpload(upload);
-                    uploader.setChunkSize(10 * 1024  * 1024 );
+
+                    // Upload the file in chunks of 1KB sizes.
+                    uploader.setChunkSize(1024);
+
+                    // Upload the file as long as data is available. Once the
+                    // file has been fully uploaded the method will return -1
                     do {
+                        // Calculate the progress using the total size of the uploading file and
+                        // the current offset.
                         long totalBytes = upload.getSize();
                         long bytesUploaded = uploader.getOffset();
                         double progress = (double) bytesUploaded / totalBytes * 100;
@@ -97,20 +105,39 @@ class TusUploaderProcess {
                         System.out.printf("Upload at %06.2f%%.\n", progress);
                     } while (uploader.uploadChunk() > -1);
 
+                    // Allow the HTTP connection to be closed and cleaned up
                     uploader.finish();
-
+                    uploadSuccessfull = true;
                     System.out.println("Upload finished.");
                     System.out.format("Upload available at: %s", uploader.getUploadURL().toString());
                 }
             };
-
             executor.makeAttempts();
-
         } catch (Exception e) {
-            System.out.println("last catch Upload finished." );
             e.printStackTrace();
         }
+
     }
 
+    public static String returnAccessToken(){
+        Dotenv dotenv = Dotenv.configure().directory("../../").load();
+
+        String username = dotenv.get("ACCOUNT_USERNAME");
+        String password = dotenv.get("ACCOUNT_PASSWORD");
+        String apiUrl = dotenv.get("DEX_URL");
+
+
+        LoginClient lc = new LoginClient();
+        String access;
+        access = lc.login(username, password, apiUrl);
+        System.out.println("accessToken...[" + access + "]");
+        String trimmedAccessToken = access.trim();
+
+        return trimmedAccessToken;
+    }
+
+    public static boolean isUploadSuccessfull(){
+        return uploadSuccessfull;
+    }
 
 }

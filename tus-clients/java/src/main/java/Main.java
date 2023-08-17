@@ -1,25 +1,35 @@
-import io.github.cdimascio.dotenv.Dotenv;
-import io.tus.java.client.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import io.tus.java.client.ProtocolException;
+import io.tus.java.client.TusClient;
+import io.tus.java.client.TusExecutor;
+import io.tus.java.client.TusURLMemoryStore;
+import io.tus.java.client.TusUpload;
+import io.tus.java.client.TusUploader;
+import org.json.JSONObject;
 
-public class Main {
+/**
+ * A representative Example class to show an usual usecase.
+ */
+public final class Main {
+    /**
+     * Main method to run a standard upload task.
+     * @param
+     */
     public static void main(String[] args) {
-
-        Dotenv dotenv = Dotenv.load();
-
-        TusClient client = new TusClient();
-        TusUploaderProcess tusUploader = new TusUploaderProcess(dotenv,client);
-        tusUploader.makeUpload();
+        TusUploaderProcess.makeUpload();
+    }
 
 
-      System.out.println("Upload end---"  );
+    private Main() {
+        throw new IllegalStateException("Utility class");
     }
 }

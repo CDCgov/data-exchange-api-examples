@@ -9,7 +9,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class LoginClient {
-    public static String login(String username, String password, String url) {
+    public  String login(String username, String password, String url) {
         try {
             URL apiUrl = new URL(url + "oauth");
             HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
@@ -42,6 +42,7 @@ public class LoginClient {
 
                     JSONObject jsonResponse = new JSONObject(response.toString());
                     String accessToken = jsonResponse.getString("access_token");
+
                     System.out.println("accessToken-----." +accessToken);
                     return accessToken;
                 }
