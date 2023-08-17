@@ -28,7 +28,6 @@ public final class Main {
         TusUploaderProcess.makeUpload();
     }
 
-
     private Main() {
         throw new IllegalStateException("Utility class");
     }

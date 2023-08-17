@@ -14,6 +14,9 @@ import io.tus.java.client.TusExecutor;
 import io.tus.java.client.TusURLMemoryStore;
 import io.tus.java.client.TusUpload;
 import io.tus.java.client.TusUploader;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONObject;
 
 /**
@@ -21,7 +24,7 @@ import org.json.JSONObject;
  */
 public class TusUploaderProcess {
 
-    private static boolean uploadSuccessfull = false;
+    private static boolean uploadSuccessful = false;
     /**
      * makeUpload method to run a standard upload task.
      * @param
@@ -34,6 +37,8 @@ public class TusUploaderProcess {
             // redirects but still work correctly.
             System.setProperty("http.strictPostRedirect", "true");
             Dotenv dotenv = Dotenv.configure().directory("../../").load();
+
+            String accessToken = "";
 
             String username = dotenv.get("ACCOUNT_USERNAME");
             String password = dotenv.get("ACCOUNT_PASSWORD");
@@ -50,7 +55,7 @@ public class TusUploaderProcess {
             // Configure tus HTTP endpoint. This URL will be used for creating new uploads
             client.setUploadCreationURL(new URL(apiUrl + "upload"));
 
-            File file = new File("../../upload-files/large_file_1MB_001.txt");
+            File file = new File("../../upload-files/1MB-test-file.txt");
 
             // Enable resumable uploads by storing the upload URL in memory
             client.enableResuming(new TusURLMemoryStore());
@@ -62,7 +67,7 @@ public class TusUploaderProcess {
             final TusUpload upload = new TusUpload(file);
 
             HashMap<String, String> metadataMap = new HashMap<>();
-            metadataMap.put("filename", "large_file_1MB_001");
+            metadataMap.put("filename", "1MB-test-file");
             metadataMap.put("filetype", "text/plain");
             metadataMap.put("meta_destination_id", "dextesting");
             metadataMap.put("meta_ext_event", "testevent1");
@@ -70,11 +75,11 @@ public class TusUploaderProcess {
             metadataMap.put("meta_ext_sourceversion", "V2022-12-31");
             metadataMap.put("meta_ext_entity", "DD2");
             metadataMap.put("meta_username", "ygj6@cdc.gov");
-            metadataMap.put("meta_ext_filename", "large_file_1MB_001");
+            metadataMap.put("meta_ext_filename", "1MB-test-file");
             metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
             metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
 
-            String accessToken = returnAccessToken();
+            accessToken = returnAccessToken();
             headerMap.put("Authorization", "Bearer " + accessToken);
 
             upload.setMetadata(metadataMap);
@@ -82,6 +87,7 @@ public class TusUploaderProcess {
 
             System.out.println("Starting upload...");
 
+            String finalAccessToken = accessToken;
             TusExecutor executor = new TusExecutor() {
                 @Override
                 protected void makeAttempt() throws ProtocolException, IOException {
@@ -107,7 +113,10 @@ public class TusUploaderProcess {
 
                     // Allow the HTTP connection to be closed and cleaned up
                     uploader.finish();
-                    uploadSuccessfull = true;
+                    URL url = new URL(apiUrl + "status/");
+                    String[] split = uploader.getUploadURL().toString().split("/");
+                    String testUrl = url + split[split.length-1].trim();
+                    uploadSuccessful = isUploadSuccessful(testUrl, finalAccessToken);
                     System.out.println("Upload finished.");
                     System.out.format("Upload available at: %s", uploader.getUploadURL().toString());
                 }
@@ -136,8 +145,32 @@ public class TusUploaderProcess {
         return trimmedAccessToken;
     }
 
-    public static boolean isUploadSuccessfull(){
-        return uploadSuccessfull;
+    public static boolean isUploadSuccessful(String url, String accessToken){
+        System.out.println("url in : " + url);
+        System.out.println("accessToken in : " + accessToken);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + accessToken)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            int statusCode = response.code();
+            //String responseBody = response.body().string();
+            System.out.println("Response status code: " + statusCode);
+            //System.out.println("Response body: " + responseBody);
+
+            if(statusCode == 200)
+                uploadSuccessful=true;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return uploadSuccessful;
+    }
+
+    public static boolean isTheFileCreated(){
+        return uploadSuccessful;
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class TusUploaderProcessTest {
+public class UploadFileTest {
 
     private static TusClient client;
 
@@ -28,20 +28,19 @@ public class TusUploaderProcessTest {
     void makeUploadTest() {
 
         //Check if the file exists
-        File file = new File("../../upload-files/large_file_1MB_001.txt");
+        File file = new File("../../upload-files/1MB-test-file.txt");
         Assertions.assertTrue(file.exists());
 
         // Check if the upload URL is not null
-        Assertions.assertNotNull(uploader.getUploadURL(), "https://apistg.cdc.gov/upload");
+        Assertions.assertNotNull(uploader.getUploadURL(), dotenv.get("DEX_URL") + "upload");
 
         // Check if the upload URL is valid
-        Assertions.assertTrue(uploader.getUploadURL().toString().startsWith(dotenv.get("DEX_URL") + "upload"),
-                "https://apistg.cdc.gov/upload");
+        Assertions.assertTrue(uploader.getUploadURL().toString().startsWith(dotenv.get("DEX_URL") + "upload"), true);
 
         //Check if the upload is successfull
         TusUploaderProcess.makeUpload();
 
-        Assertions.assertTrue(TusUploaderProcess.isUploadSuccessfull());
+        Assertions.assertTrue(TusUploaderProcess.isTheFileCreated());
 
 
     }
