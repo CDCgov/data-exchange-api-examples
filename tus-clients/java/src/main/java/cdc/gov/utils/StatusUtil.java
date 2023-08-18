@@ -33,9 +33,9 @@ public class StatusUtil {
             Response response = okHttpClient.newCall(request).execute(); 
 
             if(response.code() == 400) {
-                System.out.println("Status Call Retry!");
-
+                
                 for(int i = 1; i <=3; i++) {   
+                    System.out.println("Status Call Retry - " + i);
 
                     Thread.sleep(3000);
                     response = okHttpClient.newCall(request).execute(); 
