@@ -33,7 +33,7 @@ public class TusUploadExecutor extends  TusExecutor {
             
             setHeaders(token);
 
-            setMetadata(file);
+            setMetadata("dextesting", "testevent1", file);
             
             makeAttempts();
 
@@ -97,20 +97,16 @@ public class TusUploadExecutor extends  TusExecutor {
         client.setHeaders(headerMap);
     }
 
-    private void setMetadata(File file) {
+    private void setMetadata(String destination, String event, File file) {
 
         HashMap<String, String> metadataMap = new HashMap<>();
-        metadataMap.put("meta_destination_id", "dextesting");
-        metadataMap.put("meta_ext_event", "testevent1");
-        
-        metadataMap.put("filename", "1MB-test-file");
+        metadataMap.put("meta_destination_id", destination);
+        metadataMap.put("meta_ext_event", event);        
+        metadataMap.put("filename", file.getName());
         metadataMap.put("filetype", "text/plain");
 
-        metadataMap.put("meta_ext_source", "IZGW");
-        metadataMap.put("meta_ext_sourceversion", "V2022-12-31");
-        metadataMap.put("meta_ext_entity", "DD2");
-        metadataMap.put("meta_username", "ygj6@cdc.gov");
-        metadataMap.put("meta_ext_filename", "1MB-test-file");
+        metadataMap.put("meta_ext_source", "INTEGRATION-TEST");
+        metadataMap.put("meta_ext_filename", file.getName());
         metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
         metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
 
