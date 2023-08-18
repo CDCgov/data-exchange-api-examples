@@ -39,6 +39,10 @@ public class StatusUtil {
 
                     Thread.sleep(3000);
                     response = okHttpClient.newCall(request).execute(); 
+
+                    if(response.code() == 200) {
+                        break;
+                    }
                 }
             }
 
@@ -48,7 +52,7 @@ public class StatusUtil {
                 return getStatusResponse(response);
                 
             } else  {
-                
+
                 throw new Exception("Status Call Failed with Response code " + response.code());
             }                       
         } catch (Exception e) {
