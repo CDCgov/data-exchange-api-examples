@@ -68,9 +68,9 @@ public class TusUploadExecutor extends  TusExecutor {
             long bytesUploaded = uploader.getOffset();
             double progress = (double) bytesUploaded / totalBytes * 100;
 
-            if(progress == 100) {
-                System.out.printf("Upload at %06.2f%%.\n", progress);
-            }            
+            
+            System.out.printf("Upload at %06.2f%%.\n", progress);
+                        
         } while (uploader.uploadChunk() > -1);
 
         // Allow the HTTP connection to be closed and cleaned up
