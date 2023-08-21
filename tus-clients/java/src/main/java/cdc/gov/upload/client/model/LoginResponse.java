@@ -1,4 +1,4 @@
-package cdc.gov.model;
+package cdc.gov.upload.client.model;
 
 import java.util.ArrayList;
 

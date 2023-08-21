@@ -1,4 +1,4 @@
-package cdc.gov.utils;
+package cdc.gov.upload.client.utils;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
-import cdc.gov.model.FileStatus;
+import cdc.gov.upload.client.model.FileStatus;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

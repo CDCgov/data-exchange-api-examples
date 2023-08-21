@@ -1,12 +1,16 @@
-package cdc.gov;
+package cdc.gov.upload.client;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
-import cdc.gov.model.FileStatus;
-import cdc.gov.utils.LoginUtil;
-import cdc.gov.utils.StatusUtil;
+import cdc.gov.upload.client.model.FileStatus;
+import cdc.gov.upload.client.tus.TusUploadExecutor;
+import cdc.gov.upload.client.utils.LoginUtil;
+import cdc.gov.upload.client.utils.StatusUtil;
 
 public class FileUploader {
 
@@ -31,12 +35,25 @@ public class FileUploader {
                 baseUrl = prop.getProperty("URL");                
             }
 
+            System.out.println("username: " + username);
+            if(password != null && !password.isEmpty()) {
+                System.out.println("password: *****");
+            } else {
+                System.out.println("password: " + password);
+            }
+            
+            System.out.println("baseUrl: " + baseUrl);
+
             System.out.println("Getting Token");
             String token = LoginUtil.getToken(username, password, baseUrl);
 
             TusUploadExecutor tusUploadExecutor = new TusUploadExecutor();
 
-            tusUploadExecutor.initiateUpload(token, baseUrl, getFileToUpload("1MB-test-file"));
+            File file = getFileToUpload("1MB-test-file");
+
+            Map<String, String> metadata = getMetadata("dextesting", "testevent1", file);
+
+            tusUploadExecutor.initiateUpload(token, baseUrl, file, metadata);
 
             String tguid = tusUploadExecutor.getTguid();
             System.out.println("TGUID Received: " + tguid);
@@ -75,4 +92,20 @@ public class FileUploader {
 
         return null;
     }
+
+    private static Map<String, String> getMetadata(String destination, String event, File file) {
+
+        HashMap<String, String> metadataMap = new HashMap<>();
+        metadataMap.put("meta_destination_id", destination);
+        metadataMap.put("meta_ext_event", event);        
+        metadataMap.put("filename", file.getName());
+        metadataMap.put("filetype", "text/plain");
+
+        metadataMap.put("meta_ext_source", "INTEGRATION-TEST");
+        metadataMap.put("meta_ext_filename", file.getName());
+        metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
+        metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
+
+        return metadataMap;
+    }    
 }

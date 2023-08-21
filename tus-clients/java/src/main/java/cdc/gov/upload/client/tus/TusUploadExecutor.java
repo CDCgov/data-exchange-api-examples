@@ -1,9 +1,10 @@
-package cdc.gov;
+package cdc.gov.upload.client.tus;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import io.tus.java.client.ProtocolException;
@@ -19,7 +20,7 @@ public class TusUploadExecutor extends  TusExecutor {
     private TusUpload upload = null;
     private String tguid = null;
     
-    public void initiateUpload(String token, String baseUrl, File file) {
+    public void initiateUpload(String token, String baseUrl, File file, Map<String, String> metadata) {
 
         try {
             client = new TusClient();
@@ -33,7 +34,7 @@ public class TusUploadExecutor extends  TusExecutor {
             
             setHeaders(token);
 
-            setMetadata("dextesting", "testevent1", file);
+            upload.setMetadata(metadata);
             
             makeAttempts();
 
@@ -96,20 +97,4 @@ public class TusUploadExecutor extends  TusExecutor {
 
         client.setHeaders(headerMap);
     }
-
-    private void setMetadata(String destination, String event, File file) {
-
-        HashMap<String, String> metadataMap = new HashMap<>();
-        metadataMap.put("meta_destination_id", destination);
-        metadataMap.put("meta_ext_event", event);        
-        metadataMap.put("filename", file.getName());
-        metadataMap.put("filetype", "text/plain");
-
-        metadataMap.put("meta_ext_source", "INTEGRATION-TEST");
-        metadataMap.put("meta_ext_filename", file.getName());
-        metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
-        metadataMap.put("original_file_timestamp", String.valueOf(file.lastModified()));
-
-        upload.setMetadata(metadataMap);
-    }    
 }

@@ -1,4 +1,4 @@
-package cdc.gov.utils;
+package cdc.gov.upload.client.utils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
-import cdc.gov.model.LoginResponse;
+import cdc.gov.upload.client.model.LoginResponse;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
