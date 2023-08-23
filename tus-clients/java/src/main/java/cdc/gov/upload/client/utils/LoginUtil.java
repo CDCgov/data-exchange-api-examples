@@ -18,7 +18,7 @@ import okhttp3.ResponseBody;
 
 public class LoginUtil {
 
-    public static String getToken(String username, String password, String baseUrl) {
+    public static String getToken(String username, String password, String baseUrl) throws Exception {
         try {
             String loginUrl = baseUrl + "/oauth";
             System.out.println("Login URL: " + loginUrl);
@@ -59,7 +59,7 @@ public class LoginUtil {
         } catch (Exception e) {
 
             e.printStackTrace();            
-            return null;
+            throw e;
         }
     }
 }
