@@ -57,7 +57,7 @@ public class TusUploadExecutor extends  TusExecutor {
         TusUploader uploader = client.resumeOrCreateUpload(upload);
 
         // Upload the file in chunks of 1KB sizes.
-        uploader.setChunkSize(1024);
+        uploader.setChunkSize(1024 * 1024);
 
         // Upload the file as long as data is available. Once the
         // file has been fully uploaded the method will return -1
@@ -67,10 +67,8 @@ public class TusUploadExecutor extends  TusExecutor {
             long totalBytes = upload.getSize();
             long bytesUploaded = uploader.getOffset();
             double progress = (double) bytesUploaded / totalBytes * 100;
-
             
-            System.out.printf("Upload at %06.2f%%.\n", progress);
-                        
+            System.out.printf("Upload at %06.2f%%.\n", progress);                        
         } while (uploader.uploadChunk() > -1);
 
         // Allow the HTTP connection to be closed and cleaned up

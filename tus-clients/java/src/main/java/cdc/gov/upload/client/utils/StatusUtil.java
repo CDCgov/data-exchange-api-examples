@@ -17,7 +17,7 @@ import okhttp3.ResponseBody;
 
 public class StatusUtil {
     
-        public static FileStatus getFileStatus(String token, String tguid, String baseUrl) throws Exception {
+    public static FileStatus getFileStatus(String token, String tguid, String baseUrl) throws Exception {
         try {
             String statusUrl = baseUrl + "/status/" + tguid;
             System.out.println("Status URL: " + statusUrl);
@@ -62,7 +62,7 @@ public class StatusUtil {
         }
     }
 
-        private static FileStatus getStatusResponse(Response response)
+    private static FileStatus getStatusResponse(Response response)
                 throws JsonProcessingException, JsonMappingException, IOException {
             ResponseBody responseBody = response.body(); 
 
