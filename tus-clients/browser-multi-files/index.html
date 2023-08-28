@@ -9,7 +9,6 @@
   <body>
     <div class="container">
       <h1>Demo File Uploader</h1>
-
       <p>
         This demo shows the basic functionality of authentication based on configuration environment and upload of files. 
       </p>
@@ -17,7 +16,7 @@
         You can select a file using the controls below and start/pause the upload as you wish.
       </p>
       <p><b>Note:</b> Must have env.js file with configuration environment.</p>
-
+      <p><b>Note:</b> Chunksize should be set on the client for uploading files of large size (1GB or over).</p>
       <!-- <p>
         For a prettier demo please go to the
         <a href="http://tus.io/demo.html">tus.io</a> website.
@@ -56,7 +55,7 @@
             </label>
           </td>
           <td>
-            <input type="number" id="chunksize" name="chunksize">
+            <input type="number" id="chunksize" name="chunksize" value="40000000">
           </td>
         </tr>
         <tr>
