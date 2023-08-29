@@ -57,7 +57,7 @@ public class TusUploadExecutor extends  TusExecutor {
         TusUploader uploader = client.resumeOrCreateUpload(upload);
 
         // Upload the file in chunks of 1KB sizes.
-        uploader.setChunkSize(1024);
+        uploader.setChunkSize(1024 * 1024);
 
         // Upload the file as long as data is available. Once the
         // file has been fully uploaded the method will return -1
