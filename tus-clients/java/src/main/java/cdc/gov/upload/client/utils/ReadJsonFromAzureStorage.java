@@ -52,8 +52,8 @@ public class ReadJsonFromAzureStorage {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         blobClient.download(outputStream);
         String jsonContent = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-        System.out.println("JSON Content:");
-        System.out.println(jsonContent);
+        //System.out.println("JSON Content:");
+        //System.out.println(jsonContent);
         try {
             outputStream.close();
         } catch (IOException e) {
