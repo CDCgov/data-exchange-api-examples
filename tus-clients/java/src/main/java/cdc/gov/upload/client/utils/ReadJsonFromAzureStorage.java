@@ -40,6 +40,30 @@ public class ReadJsonFromAzureStorage {
         return connectionString;
     }
 
+    public static boolean isSmokeTest() {
+        Properties props = new Properties();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        boolean smoke = false;
+        //load a properties file
+        try(InputStream resourceStream = loader.getResourceAsStream("env.properties")) {
+            props.load(resourceStream);
+        }catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        //get the property value and print it out
+        String testMethod = props.getProperty("SMOKE");
+        if(testMethod == null )   {
+            testMethod = System.getenv("SMOKE");
+        }
+        if(testMethod.equals("true")){
+            smoke = true;
+        }
+
+        return smoke;
+    }
+
+
+
     public static String getAzureStorage() {
         String connectionString = getConnectionString();
         String containerName = "tusd-file-hooks";

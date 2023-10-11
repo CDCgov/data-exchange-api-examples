@@ -67,13 +67,16 @@ public class FileUploader {
             String jsonContent = ReadJsonFromAzureStorage.getAzureStorage();
             List<Destination> destinations = objectMapper.readValue(jsonContent, new TypeReference<List<Destination>>() {
             });
-            System.out.println("arg: " + (args.length > 0));
-            if (args.length > 0) {
-                if (args[0] != null && args[0].contains("-")) {
-                    System.out.println("Destination :" + args[0]);
-                    String[] input = args[0].split("-");
-                    destination_id = input[0].trim();
-                    event_name = input[1].trim();
+
+            boolean testMethod = ReadJsonFromAzureStorage.isSmokeTest();
+
+            System.out.println("testMethod: " + testMethod);
+            if (testMethod) {
+                //if ( testMethod.contains("-")) {
+
+                   // String[] input = testMethod.split("-");
+                    destination_id = "dextesting";
+                    event_name = "testevent1";
                     List<ExtEvent> extEvents = null;
                     for (Destination destination : destinations) {
 
@@ -88,15 +91,13 @@ public class FileUploader {
                             if (event_name.equals(extEvent.getName().trim())) {
                                 definitionFilename = extEvent.getDefinition_filename();
                                 metaDataDefinition = ReadJsonFromAzureStorage.getMetaDataDefinition(definitionFilename);
-                                System.out.println("in  destination_id: " + destination_id);
-                                System.out.println("in event_name: " + destination_id);
+
                                 break;
                             }
 
                     }
 
-                    System.out.println("out definitionFilename: " + definitionFilename);
-                    System.out.println("out metaDataDefinition: " + metaDataDefinition);
+
                     metadata = getMetadata(destination_id, event_name, metaDataDefinition, file);
                     tusUploadExecutor.initiateUpload(token, baseUrl, file, metadata);
 
@@ -112,8 +113,8 @@ public class FileUploader {
                         System.out.println("File Uploaded Successfully!");
                     }
 
-                }
-            } else{
+               // }
+            } else  {
 
             for (Destination destination : destinations) {
                 destination_id = destination.getDestination_id().trim();
@@ -174,7 +175,6 @@ public class FileUploader {
         HashMap<String, String> metadataMap = new HashMap<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("definitionFilename-----" + definitionFilename);
 
         List<Schema> schemaLists = objectMapper.readValue(definitionFilename, new TypeReference<List<Schema>>() {});
         for(Schema schema: schemaLists) {
