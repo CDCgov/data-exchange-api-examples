@@ -51,7 +51,7 @@ public class FileUploader {
             if (password != null && !password.isEmpty()) {
                 System.out.println("password: *****");
             } else {
-                System.out.println("password: " + password);
+                System.out.println("No password: " );
             }
 
             System.out.println("baseUrl: " + baseUrl);
@@ -200,7 +200,7 @@ public class FileUploader {
         metadataMap.put("filename", file.getName());
         metadataMap.put("original_filename", file.getName());
         metadataMap.put("filetype", "text/plain");
-        metadataMap.put("meta_username", "ygj6@cdc.gov");
+        metadataMap.put("meta_username", "integration.test@cdc.gov");
         metadataMap.put("meta_ext_filename", file.getName());
         metadataMap.put("meta_ext_objectkey", UUID.randomUUID().toString());
         metadataMap.put("meta_ext_file_timestamp", String.valueOf(file.lastModified()));
