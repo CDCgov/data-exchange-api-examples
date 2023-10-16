@@ -12,36 +12,26 @@ You’ll generate a Java application that follows Gradle’s conventions.
 
 ## Setting Up Credentials
 
-This tool must have the following environment variables or create a .env file with the following information.
+This tool must have the following environment variables or create a env.properties file under resources folder with this information.
 
 ```bash
-ACCOUNT_USERNAME=<sams_sys_account_name> \
-ACCOUNT_PASSWORD=<sams_sys_account_pswd> \
-DEX_URL=<dex_staging_url> \
+USERNAME=<sams_sys_account_name> \
+PASSWORD=<sams_sys_account_pswd> \
+URL=<dex_staging_url> \
 ```
 
 ## Running the code
 
-- Run the init task
-
-```bash
-gradle init
-```
-
-- Run the application
-
-```bash
-./gradlew run
-```
-
 - Bundle the application
 
 ```bash
-./gradlew build
+./gradle clean jar
 ```
 
-- Run the Gradle test task with `--info` and `--scan` options
+- Runnign the jar file sample command
 
 ```bash
-./gradlew test --info --scan
+java -DUSERNAME="username" -DPASSWORD="password" -DURL="https://apidev.cdc.gov" -jar .\dex-upload-client-1.0-SNAPSHOT.jar "dextesting" "testevent1"
 ```
+
+
