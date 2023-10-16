@@ -1,13 +1,11 @@
 package cdc.gov.upload.client;
 
 import java.io.File;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.apache.commons.io.FileUtils;
 
 import cdc.gov.upload.client.model.FileStatus;
 import cdc.gov.upload.client.tus.TusUploadExecutor;
@@ -65,8 +63,6 @@ public class FileUploader {
                     System.out.println("Using Destination: " + destination + " Event: " + event);
                 }
 
-                
-
                 System.out.println("Getting Token");
                 String token = LoginUtil.getToken(username, password, baseUrl);
 
@@ -103,30 +99,30 @@ public class FileUploader {
         if(password != null && !password.isEmpty()) {
             System.out.println("password: *****");
         } else {
-            System.out.println("password: " + password);
+            System.out.println("password: null");
         }
         
         System.out.println("baseUrl: " + baseUrl);
     }
 
-    private static File getFileToUpload(String fileName) {        
+    private static File getFileToUpload(String fileName) throws Exception {        
         try {
-            InputStream is = LoginUtil.class.getClassLoader().getResourceAsStream(fileName);
-            File file = new File(fileName);
-            if (is == null) {
+            URL url = LoginUtil.class.getClassLoader().getResource(fileName);
 
-                System.err.println("upload file not found!");
+            if(url != null) {
+                File file = new File(url.getFile());
+
+                if (file.exists() && !file.isDirectory()) {
+                   return file;
+                } else {
+                    throw new Exception("upload file not found!");
+                }
             } else {
-
-                FileUtils.copyInputStreamToFile(is, file);
-                return file;
-            }
+                throw new Exception("upload file not found!");
+            }                       
         } catch (Exception e) {
-
-            e.printStackTrace();
+            throw e;
         }
-
-        return null;
     }
 
     private static Map<String, String> getMetadata(String destination, String event, File file) throws Exception {
@@ -159,7 +155,7 @@ public class FileUploader {
             metadataMap.put("izgw_path", "/upload/files/f394848234438a40878125e990adfdc7");
             metadataMap.put("izgw_uploaded_timestamp", "Mon, 21 Aug 2023 20:00:21 UTC");
             metadataMap.put("meta_ext_entity", "MAA");
-            metadataMap.put("meta_username", "rohit.testing.izgateway.org");
+            metadataMap.put("meta_username", "integration.testing.izgateway.org");
             metadataMap.put("meta_ext_objectkey", "5c70b304-9a07-3329-8cac-a64a5dcba380");
 
         } else {

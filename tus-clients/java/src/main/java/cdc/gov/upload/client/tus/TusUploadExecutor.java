@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-
 import io.tus.java.client.ProtocolException;
 import io.tus.java.client.TusClient;
 import io.tus.java.client.TusExecutor;
