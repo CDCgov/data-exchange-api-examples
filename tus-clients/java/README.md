@@ -31,7 +31,11 @@ URL=<dex_staging_url> \
 - Runnign the jar file sample command
 
 ```bash
-java -DUSERNAME="username" -DPASSWORD="password" -DURL="https://apidev.cdc.gov" -jar .\dex-upload-client-1.0-SNAPSHOT.jar "dextesting" "testevent1"
+java -DUSERNAME="username" -DPASSWORD="password" -DURL="https://apidev.cdc.gov" -DSMOKE -jar .\dex-upload-client-1.0-SNAPSHOT.jar
+```
+
+```bash
+java -DUSERNAME="username" -DPASSWORD="password" -DURL="https://apidev.cdc.gov" -DREGRESSION -DConfigsFolder="folder-location" -jar .\dex-upload-client-1.0-SNAPSHOT.jar
 ```
 
 

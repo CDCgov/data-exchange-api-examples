@@ -18,7 +18,7 @@ public class TusUploadExecutor extends  TusExecutor {
     private TusUpload upload = null;
     private String tguid = null;
     
-    public void initiateUpload(String token, String baseUrl, File file, Map<String, String> metadata) {
+    public void initiateUpload(String token, String baseUrl, File file, Map<String, String> metadata) throws Exception {
 
         try {
             client = new TusClient();
@@ -39,6 +39,7 @@ public class TusUploadExecutor extends  TusExecutor {
         } catch (Exception e) {
 
             e.printStackTrace();
+            throw e;
         }
     }
 
