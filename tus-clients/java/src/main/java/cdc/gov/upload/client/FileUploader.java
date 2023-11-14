@@ -1,7 +1,10 @@
 package cdc.gov.upload.client;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
-import java.net.URL;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +111,7 @@ public class FileUploader {
                     System.out.println("Using Destination: " + destination + " Event: " + event);
                 }
 
-                File file = getFileToUpload("1MB-test-file");
+                File file = getFileToUpload();
 
                 Map<String, String> metadata = DestinationsUtil.getMetadata(destination, event, file);
 
@@ -134,7 +137,7 @@ public class FileUploader {
 
                             List<Definition>  definitions = DestinationsUtil.getMetadtaDefinition(configsFolder, extEvent.getDefinition_filename());
 
-                            File file = getFileToUpload("1MB-test-file");
+                            File file = getFileToUpload();
 
                             upload.setFileName(file.getName());
 
@@ -192,22 +195,18 @@ public class FileUploader {
         System.out.println("baseUrl: " + baseUrl);
     }
 
-    private static File getFileToUpload(String fileName) throws Exception {        
-        try {
-            URL url = LoginUtil.class.getClassLoader().getResource(fileName);
+    private static File getFileToUpload() throws Exception {        
+        try { 
+            File tempFile =  File.createTempFile("test-upload-file", ".temp");
+            tempFile.deleteOnExit();
 
-            if(url != null) {
-                File file = new File(url.getFile());
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            fos.write("--empty file--".getBytes());
+            fos.close();
 
-                if (file.exists() && !file.isDirectory()) {
-                   return file;
-                } else {
-                    throw new Exception("upload file not found!");
-                }
-            } else {
-                throw new Exception("upload file not found!");
-            }                       
+            return tempFile;
         } catch (Exception e) {
+            System.out.println("Failed to create test upload file!");
             throw e;
         }
     }    
