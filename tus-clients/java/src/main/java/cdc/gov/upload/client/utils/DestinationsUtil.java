@@ -3,6 +3,8 @@ package cdc.gov.upload.client.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,8 @@ public class DestinationsUtil {
     
     public static List<Destination> getAllDestinations(String configsFolder) throws Exception {
 
-        InputStream in = new FileInputStream(configsFolder + "/allowed_destination_and_events.json");
+        Path path  = Paths.get(configsFolder + "/" + "allowed_destination_and_events.json");
+        InputStream in = new FileInputStream(path.normalize().toAbsolutePath().toString());
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  
@@ -32,7 +35,8 @@ public class DestinationsUtil {
 
     public static List<Definition> getMetadtaDefinition(String configsFolder, String fileName) throws Exception {
 
-        InputStream in = new FileInputStream(configsFolder + "/" + fileName);
+        Path path  = Paths.get(configsFolder + "/" + fileName);
+        InputStream in = new FileInputStream(path.normalize().toAbsolutePath().toString());
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  
