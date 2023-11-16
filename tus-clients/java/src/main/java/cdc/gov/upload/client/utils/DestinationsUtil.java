@@ -26,6 +26,7 @@ public class DestinationsUtil {
 
         List<Destination> destinations = objectMapper.readValue(in, new TypeReference<List<Destination>>() {});
 
+        in.close();
         return destinations;
     }
 
@@ -38,6 +39,7 @@ public class DestinationsUtil {
 
         List<Definition> definitions = objectMapper.readValue(in, new TypeReference<List<Definition>>() {});
 
+        in.close();
         return definitions;
     }
 

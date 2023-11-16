@@ -1,10 +1,7 @@
 package cdc.gov.upload.client;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +71,13 @@ public class FileUploader {
 
             upload(args, username, password, baseUrl, smoke, regression);
 
+            prop.clear();
+
         } catch (Throwable t) {
 
             t.printStackTrace();
             System.exit(1);
-        }
+        } 
     }
 
     private static void upload(String[] args, String username, String password, String baseUrl, boolean smoke,
