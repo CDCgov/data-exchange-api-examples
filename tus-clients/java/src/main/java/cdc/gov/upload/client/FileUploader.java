@@ -2,13 +2,8 @@ package cdc.gov.upload.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import cdc.gov.upload.client.model.Definition;
-import cdc.gov.upload.client.model.Destination;
-import cdc.gov.upload.client.model.ExtEvent;
 import cdc.gov.upload.client.model.FileStatus;
 import cdc.gov.upload.client.model.Upload;
 import cdc.gov.upload.client.tus.TusUploadExecutor;
@@ -25,7 +20,6 @@ public class FileUploader {
 
         try {
             String username, password, baseUrl;
-            boolean smoke = false, regression = false;
 
             Properties prop = new Properties();
 
@@ -50,26 +44,9 @@ public class FileUploader {
                 baseUrl = prop.getProperty("URL");                
             }
 
-            if(System.getProperty("SMOKE") != null) {
-                smoke = true;
-            }
-
-            if(System.getProperty("REGRESSION") != null) {
-                regression = true;
-            }
-
-            if(!smoke && !regression) {
-                smoke = true;
-            }
-
-            if(smoke && regression) {
-                smoke = true;
-                regression = false;
-            }
-
             printValues(username, password, baseUrl);
 
-            upload(args, username, password, baseUrl, smoke, regression);
+            upload(args, username, password, baseUrl);
 
             prop.clear();
 
@@ -80,8 +57,7 @@ public class FileUploader {
         } 
     }
 
-    private static void upload(String[] args, String username, String password, String baseUrl, boolean smoke,
-            boolean regression) throws Exception {
+    private static void upload(String[] args, String username, String password, String baseUrl) throws Exception {
 
         if(username != null && !username.isEmpty() &&
            password != null && !password.isEmpty() && 
@@ -92,72 +68,26 @@ public class FileUploader {
 
             TusUploadExecutor tusUploadExecutor = new TusUploadExecutor();
 
-            if(smoke) {
-                System.out.println("---RUNNING SMOKE TEST---");
+            String destination = null, event = null;
+            if(args.length == 2) {
+                destination = args[0];
+                event = args[1];
+            }
 
-                String destination = null, event = null;
-                if(args.length == 2) {
-                    destination = args[0];
-                    event = args[1];
-                }
+            if((destination == null || destination.isEmpty()) && 
+                (event == null || event.isEmpty())) {
+                System.out.println("No Destination && Event Provided. Using Defaults: " + DEFAULT_DESTINATION + "-" + DEFAULT_EVENT);
+                destination = DEFAULT_DESTINATION;
+                event = DEFAULT_EVENT;
+            } else {
+                System.out.println("Using Destination: " + destination + " Event: " + event);
+            }
 
-                if((destination == null || destination.isEmpty()) && 
-                    (event == null || event.isEmpty())) {
-                    System.out.println("No Destination && Event Provided. Using Defaults: " + DEFAULT_DESTINATION + "-" + DEFAULT_EVENT);
-                    destination = DEFAULT_DESTINATION;
-                    event = DEFAULT_EVENT;
-                } else {
-                    System.out.println("Using Destination: " + destination + " Event: " + event);
-                }
+            File file = getFileToUpload();
 
-                File file = getFileToUpload();
+            Map<String, String> metadata = DestinationsUtil.getMetadata(destination, event, file);
 
-                Map<String, String> metadata = DestinationsUtil.getMetadata(destination, event, file);
-
-                uploadFile(baseUrl, file, metadata, token, tusUploadExecutor, null);
-
-            } else if(regression) {
-                System.out.println("---RUNNING REGRESSION TEST---");
-
-                String configsFolder = System.getProperty("ConfigsFolder");
-                if(configsFolder == null || configsFolder.isEmpty()){
-                    System.out.println("Configs Folder Not Found");
-                } else {
-                    List<Upload> uploads = new ArrayList<Upload>();
-
-                    List<Destination> destinations = DestinationsUtil.getAllDestinations(configsFolder);
-                    for(Destination destination : destinations) {
-                        Upload upload = new Upload();
-                        for(ExtEvent extEvent : destination.getExt_events()) {
-                            System.out.println("Destination: " + destination.getDestination_id() + " Event: " + extEvent.getName());
-
-                            upload.setDestination(destination.getDestination_id());
-                            upload.setEvent(extEvent.getName());
-
-                            List<Definition>  definitions = DestinationsUtil.getMetadtaDefinition(configsFolder, extEvent.getDefinition_filename());
-
-                            File file = getFileToUpload();
-
-                            upload.setFileName(file.getName());
-
-                            Map<String, String> metadata = DestinationsUtil.generateMetadataFromConfigs(destination.getDestination_id(), extEvent.getName(), file, definitions);
-
-                            try {
-                                uploadFile(baseUrl, file, metadata, token, tusUploadExecutor, upload);
-                            } catch(Throwable t) {
-                                upload.setUploadStatus("FAILED");
-                            }
-                            
-                            uploads.add(upload);
-                        }
-                    }
-                    
-                    for(Upload upload : uploads) {      
-
-                        System.out.println("Destination: " + upload.getDestination() + " Event: " + upload.getEvent() + " File: " + upload.getFileName() + " TGUID: " + upload.getTguid() + " Status: " + upload.getUploadStatus());                        
-                    }
-                }
-            }              
+            uploadFile(baseUrl, file, metadata, token, tusUploadExecutor, null);
         }
     }
 
