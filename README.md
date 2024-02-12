@@ -1,19 +1,20 @@
-# DeX API Examples
+# DEX API Examples
 
 ## Overview
 
-This repo holds example scripts showing how to use the Tus resumable upload client to upload a file to the DeX API. See the following table for the hostnames of the different DeX API environments:
+This repo holds example scripts showing how to use the Tus resumable upload client to upload a file to the DEX API. See the following table for the hostnames of the different DEX API environments:
 
 | Env  | Hostname               |
 | ---- | ---------------------- |
 | Dev  | https://apidev.cdc.gov |
-| Prod | https://api.cdc.gov    |
+| Stg  | https://apistg.cdc.gov |
+| Prd  | https://api.cdc.gov    |
 
 ## Setup
 
 ### Authentication via SAMS
 
-Users must first authenticate with SAMS before using the DeX API. This is done by using your SAMS username and password to request an authorization token. This can be done by sending a POST request to the **/auth** API endpoint.
+Users must first authenticate with SAMS before using the DEX API. This is done by using your SAMS username and password to request an authorization token. This can be done by sending a POST request to the **/auth** API endpoint.
 
 This request must have the following header:
 
