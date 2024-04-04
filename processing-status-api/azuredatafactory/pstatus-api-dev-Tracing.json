@@ -1,0 +1,122 @@
+{
+    "name": "pstatus-api-dev-Tracing",
+    "properties": {
+        "activities": [
+            {
+                "name": "PS Health Check",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": "health",
+                    "method": "GET"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureFunction1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Create Trace",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "PS Health Check",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": "trace?uploadId=@guid()&stageName=upload&dataStreamRoute=test-event&dataStreamId=dex-testing",
+                    "method": "POST"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Create Trace",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Set Trace Id",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "Create Trace",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "trace_id",
+                    "value": {
+                        "value": "@{activity('Create Trace').output.trace_id}",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Get Trace",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Set Trace Id",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": {
+                        "value": "/trace/traceId/@{variables('trace_id')}",
+                        "type": "Expression"
+                    },
+                    "method": "GET"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Create Trace",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "variables": {
+            "traceId": {
+                "type": "String"
+            },
+            "trace_id": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2024-03-31T21:35:09Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
