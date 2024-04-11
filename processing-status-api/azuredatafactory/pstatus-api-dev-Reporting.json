@@ -44,7 +44,7 @@
                 "userProperties": [],
                 "typeProperties": {
                     "functionName": {
-                        "value": "/report/json/uploadId/@{variables('upload_id')}?eventType=test-event&destinationId=dex-testing&stageName=start&message_id=1&status=success",
+                        "value": "/report/json/uploadId/@{variables('upload_id')}?dataStreamId=test-event&dataStreamRoute=dex-testing&stageName=start&message_id=1&status=success",
                         "type": "Expression"
                     },
                     "method": "POST",
@@ -77,6 +77,37 @@
                         "value": "@guid()",
                         "type": "Expression"
                     }
+                }
+            },
+            {
+                "name": "Get Report By UploadId",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Create Report By UploadId",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": {
+                        "value": "/report/uploadId/@{variables('upload_id')}",
+                        "type": "Expression"
+                    },
+                    "method": "GET"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Create Trace",
+                    "type": "LinkedServiceReference"
                 }
             }
         ],
