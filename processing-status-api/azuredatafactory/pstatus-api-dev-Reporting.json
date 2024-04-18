@@ -1,0 +1,129 @@
+{
+    "name": "pstatus-api-dev-Reporting",
+    "properties": {
+        "activities": [
+            {
+                "name": "PS Health Check",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": "health",
+                    "method": "GET"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureFunction1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Create Report By UploadId",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Set uploadId",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": {
+                        "value": "/report/json/uploadId/@{variables('upload_id')}?dataStreamId=test-event&dataStreamRoute=dex-testing&stageName=start&message_id=1&status=success",
+                        "type": "Expression"
+                    },
+                    "method": "POST",
+                    "body": "{\n    \"schema_name\":\"upload\",\n    \"schema_version\":\"1.0\",\n    \"tguid\":\"%s\",\n    \"offset\":%d,\n    \"size\":%d,\n    \"filename\":\"some_upload1.csv\",\n    \"meta_data_stream_id\":\"dex-testing\",\n    \"meta_data_stream_route\":\"test-event1\",\n    \"end_time_epoch_millis\":1700009141546,\n    \"start_time_epoch_millis\":1700009137234,\n    \n    \"metadata\":{\n        \"filename\":\"10MB-test-file\",\n        \"filetype\":\"text/plain\",\n        \"meta_destination_id\":\"dex-testing\",\n        \"meta_ext_event\":\"test-event1\",\n        \"meta_ext_source\":\"IZGW\",\n        \"meta_ext_sourceversion\":\"V2022-12-31\",\n        \"meta_ext_entity\":\"DD2\",\n        \"meta_username\":\"ygj6@cdc.gov\",\n        \"meta_ext_objectkey\":\"2b18d70c-8559-11ee-b9d1-0242ac120002\",\n        \"meta_ext_filename\":\"10MB-test-file\",\n        \"meta_ext_submissionperiod\":\"1\"\n    }\n}"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Create Trace",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Set uploadId",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "PS Health Check",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "upload_id",
+                    "value": {
+                        "value": "@guid()",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Get Report By UploadId",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Create Report By UploadId",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": {
+                        "value": "/report/uploadId/@{variables('upload_id')}",
+                        "type": "Expression"
+                    },
+                    "method": "GET"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Create Trace",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "variables": {
+            "traceId": {
+                "type": "String"
+            },
+            "trace_id": {
+                "type": "String"
+            },
+            "upload_id": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2024-04-03T01:49:42Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
