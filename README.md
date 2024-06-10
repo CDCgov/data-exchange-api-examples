@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo holds example scripts showing how to use the Tus resumable upload client to upload a file to the DEX API. See the following table for the hostnames of the different DEX API environments:
+This repository contains example scripts showing how to use the Tus resumable upload client to upload a file to the DEX API. See the following table for the hostnames of the different DEX API environments:
 
 | Env  | Hostname               |
 | ---- | ---------------------- |
@@ -18,7 +18,7 @@ Users must first authenticate with SAMS before using the DEX API. This is done b
 
 This request must have the following header:
 
-- Content-Type: application/x-www-form-urlencoded
+- Content-Type: `application/x-www-form-urlencoded`
 
 Provide your SAMS credentials in the following query parameters:
 
@@ -29,16 +29,17 @@ An example request URL would look like this:
 
 `https://<hostname>/oauth?username=<your-username>&password=<your-password>`
 
-### Provide Environment Variables via Dotenv
+### Setting Environment Variables via Dotenv
 
 Now that you have selected your DeX hostname and retrieved your auth token, you need to set those values to environment variables for the example scripts to use. These can be set at the command line, or using `dotenv`. To do this, create a file in the root of this repo called `.env`. Add the following lines to this file, and fill out their values:
 
 ```
-AUTH_TOKEN=
-DEX_URL=
+ACCOUNT_USERNAME=""
+ACCOUNT_PASSWORD=""
+DEX_URL="https://apidev.cdc.gov"
 ```
 
-You should be good to go at this point. See the READMEs within each of the `tus-client` example directories for documentation on using the language-specific script.
+You're ready to proceed. See the READMEs within each of the `tus-client` example directories for documentation on using the language-specific script.
 
 ## Public Domain Standard Notice
 
