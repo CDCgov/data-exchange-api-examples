@@ -111,21 +111,18 @@ function startUpload () {
 
   const metadata =   {
 
-    // REQUIRED
-    meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
-    meta_ext_event: "testevent1",
+    // DEX Metadata Fields - version 2 sender manifest
+    version: "2.0",
+    data_stream_id: "data stream id value here",
+    data_stream_route: "data stream route value here",
+    sender_id: "sender id value here",
+    data_producer_id: "data producer id value here",
+    jurisdiction: "jurisdiction value here",
+    received_filename: "uploaded file name here"
 
-    // one of these 3 fields is needed to have the original file name 
-    filename: fileNameUpload, // OR
-    meta_ext_filename: fileNameUpload, // OR 
-    // original_filename: fileNameUpload, 
-
-    // CUSTOM PER USE_CASE
-    meta_file_timestamp: file.lastModified,
-    meta_ext_objectkey: uuidv4ID, 
-    filetype: "text/plain",
-    meta_ext_source: "for_the_demo",
-    meta_username: "example@cdc.gov",
+    // Custom Metadata Fields - varies by data stream; optional
+    //custom_field_1: "allowed custom field value",
+    //custom_field_2: "allowed custom field value"
 
   } // .metadata
 
