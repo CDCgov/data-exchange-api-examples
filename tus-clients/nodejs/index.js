@@ -13,7 +13,7 @@ async function start() {
     process.exit(1);
   }
 
-  const path = `${__dirname}/../../upload-files/10MB-test-file`;
+  const path = `${__dirname}/../../upload-files/upload test file here`;
   const file = fs.createReadStream(path);
 
   const options = {
@@ -22,17 +22,18 @@ async function start() {
       Authorization: `Bearer ${loginResponse.access_token}`,
     },
     metadata: {
-      filename: "10MB-test-file",
-      filetype: "text/plain",
-      meta_destination_id: "ndlp",
-      meta_ext_event: "routineImmunization",
-      meta_ext_source: "IZGW",
-      meta_ext_sourceversion: "V2022-12-31",
-      meta_ext_entity: "DD2",
-      meta_username: "ygj6@cdc.gov",
-      meta_ext_objectkey: uuidv4(),
-      meta_ext_filename: "10MB-test-file",
-      meta_ext_submissionperiod: '1',
+      // DEX Metadata Fields - version 2 sender manifest
+      version: "2.0",
+      data_stream_id: "data stream id value here",
+      data_stream_route: "data stream route value here",
+      sender_id: "sender id value here",
+      data_producer_id: "data producer id value here",
+      jurisdiction: "jurisdiction value here",
+      received_filename: "uploaded file name here"
+
+      // Custom Metadata Fields - varies by data stream; optional
+      //custom_field_1: "allowed custom field value",
+      //custom_field_2: "allowed custom field value"
     },
     onError(error) {
       console.error("An error occurred:");

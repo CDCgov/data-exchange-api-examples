@@ -125,19 +125,19 @@
       let prevFileBytesUploaded = 0
 
       const metadata = {
-        // REQUIRED
-        meta_destination_id: "dextesting", // final container destination: dextesting-testevent1,
-        meta_ext_event: "testevent1",
-  
-        // REQUIRED: original file name, see metadata for destination file repo
-        filename: file.name, 
-  
-        // CUSTOM (PER USE_CASE) see metadata for destination file in repo
-        meta_file_timestamp: file.lastModified,
-        meta_ext_objectkey: crypto.randomUUID(), 
-        filetype: "text/plain",
-        meta_ext_source: "for_the_demo",
-        meta_username: "example@cdc.gov",
+      // DEX Metadata Fields - version 2 sender manifest
+      version: "2.0",
+      data_stream_id: "data stream id value here",
+      data_stream_route: "data stream route value here",
+      sender_id: "sender id value here",
+      data_producer_id: "data producer id value here",
+      jurisdiction: "jurisdiction value here",
+      received_filename: "uploaded file name here"
+
+      // Custom Metadata Fields - varies by data stream; optional
+      //custom_field_1: "allowed custom field value",
+      //custom_field_2: "allowed custom field value"
+
       } // .metadata
 
       const options = {
