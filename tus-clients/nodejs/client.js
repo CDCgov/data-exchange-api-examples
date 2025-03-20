@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const c = {};
 
 c.login = async (username, password, url) => {
@@ -8,9 +6,16 @@ c.login = async (username, password, url) => {
     password: password,
   });
 
-  return axios.post(`${url}/oauth`, params).then((response) => {
+  return fetch(`${url}/oauth`, {
+    method: 'POST',
+    body: params,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+  .then((response) => {
     if (response.status == 200 && response.statusText === "OK") {
-      return response.data;
+      return response.json();
     }
     console.error(
       `Client login failed to SAMS, error code is ${response.status}, error message is ${response.statusText}`
