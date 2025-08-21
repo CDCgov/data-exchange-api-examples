@@ -1,5 +1,7 @@
 # Public Health Data Operations (PHDO) API Examples
 
+*Note: This repository will no longer receive updates and will be archived as of 8/30/2025*
+
 ## Overview
 
 This repository contains example upload client scripts demonstrating use PHDO upload services. <br/>
